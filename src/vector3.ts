@@ -110,6 +110,8 @@ export class Vector3 {
         return this;
     }
 
+    // TODO: matrixMult(matrix: Matrix3): Vector3
+
     div(vector: Vector3): Vector3 {
         this.x /= vector.x;
         this.y /= vector.y;

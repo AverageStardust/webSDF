@@ -174,6 +174,8 @@ test(".mult()", () => {
     expect(vec4).toEqual(new Vector3(7, 1, 6));
 });
 
+// TODO: matrixMult(matrix: Matrix3): Vector3
+
 test(".div()", () => {
     const vec1 = new Vector3(6, 3, 48);
     const vec2 = new Vector3(3, 1, 4);
