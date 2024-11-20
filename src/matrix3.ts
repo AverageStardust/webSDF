@@ -1,9 +1,13 @@
-import { Vector3 } from "./vector3";
-
 class Matrix3 {
-    row1: Vector3;
-    row2: Vector3;
-    row3: Vector3;
+    elm11: number;
+    elm12: number;
+    elm13: number;
+    elm21: number;
+    elm22: number;
+    elm23: number;
+    elm31: number;
+    elm32: number;
+    elm33: number;
 
     static zero() {
         return new Matrix3(0, 0, 0, 0, 0, 0, 0, 0, 0);
@@ -15,8 +19,6 @@ class Matrix3 {
 
     // TODO: static fromArray(arr: number[]): Matrix3
 
-    // TODO: static fromRows(row1: Vector3, row2: Vector3, row3: Vector3): Matrix3
-
     // TODO: static rotateX(angle: number): Matrix3
 
     // TODO: static rotateY(angle: number): Matrix3
@@ -26,14 +28,18 @@ class Matrix3 {
     // TODO: static scale(xScale: number, yScale?: number, zScale?: number): Matrix3
 
     constructor(elm11: number, elm12: number, elm13: number, elm21: number, elm22: number, elm23: number, elm31: number, elm32: number, elm33: number) {
-        this.row1 = new Vector3(elm11, elm12, elm13);
-        this.row2 = new Vector3(elm21, elm22, elm23);
-        this.row3 = new Vector3(elm31, elm32, elm33);
+        this.elm11 = elm11;
+        this.elm12 = elm12;
+        this.elm13 = elm13;
+        this.elm21 = elm21;
+        this.elm22 = elm22;
+        this.elm23 = elm23;
+        this.elm31 = elm31;
+        this.elm32 = elm32;
+        this.elm33 = elm33;
     }
 
     // TODO: get array(): number[]
-
-    // TODO: get rows(): [Vector3, Vector3, Vector3]
 
     // TODO: get determinate(): number
 
