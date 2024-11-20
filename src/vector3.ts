@@ -63,8 +63,6 @@ export class Vector3 {
 
     // TODO: get angles(): [number, number]
 
-    // TODO: get inverse(): Vector3
-
     get array(): [number, number, number] {
         return [this.x, this.y, this.z];
     }
@@ -111,6 +109,8 @@ export class Vector3 {
     }
 
     // TODO: matrixMult(matrix: Matrix3): Vector3
+
+    // TODO: matrixTransMult(matrix: Matrix3): Vector3
 
     div(vector: Vector3): Vector3 {
         this.x /= vector.x;

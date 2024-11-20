@@ -1,13 +1,7 @@
-class Matrix3 {
-    elm11: number;
-    elm12: number;
-    elm13: number;
-    elm21: number;
-    elm22: number;
-    elm23: number;
-    elm31: number;
-    elm32: number;
-    elm33: number;
+export class Matrix3 {
+    a: number; b: number; c: number;
+    d: number; e: number; f: number;
+    g: number; h: number; i: number;
 
     static zero() {
         return new Matrix3(0, 0, 0, 0, 0, 0, 0, 0, 0);
@@ -27,25 +21,15 @@ class Matrix3 {
 
     // TODO: static scale(xScale: number, yScale?: number, zScale?: number): Matrix3
 
-    constructor(elm11: number, elm12: number, elm13: number, elm21: number, elm22: number, elm23: number, elm31: number, elm32: number, elm33: number) {
-        this.elm11 = elm11;
-        this.elm12 = elm12;
-        this.elm13 = elm13;
-        this.elm21 = elm21;
-        this.elm22 = elm22;
-        this.elm23 = elm23;
-        this.elm31 = elm31;
-        this.elm32 = elm32;
-        this.elm33 = elm33;
+    constructor(a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number) {
+        this.a = a; this.b = b; this.c = c;
+        this.d = d; this.e = e; this.f = f;
+        this.g = g; this.h = h; this.i = i;
     }
 
     // TODO: get array(): number[]
 
     // TODO: get determinate(): number
-
-    // TODO: get inverse(): Matrix3 | null
-
-    // TODO: get transpose(): Matrix3
 
     // TODO: get clone(): Matrix3
 
@@ -58,4 +42,8 @@ class Matrix3 {
     // TODO: scale(scaler: number): Matrix3
 
     // TODO: inverseScale(scaler: number): Matrix3
+
+    // TODO: inverse(): Matrix3 | null
+
+    // TODO: transpose(): Matrix3
 }

@@ -1,3 +1,4 @@
+import { Matrix3 } from "../src/matrix3";
 import { Vector3 } from "../src/vector3";
 
 test("Vector3.fromArray()", () => {
@@ -174,7 +175,25 @@ test(".mult()", () => {
     expect(vec4).toEqual(new Vector3(7, 1, 6));
 });
 
-// TODO: matrixMult(matrix: Matrix3): Vector3
+test(".matrixMult()", () => {
+    const vec = new Vector3(23, 0, -2);
+    const mat = new Matrix3(2, 2, 0, 1, -31, -5, 2, 7, -2);
+    const result = vec.matrixMult(mat);
+
+    expect(result).toBe(vec);
+    expect(vec).toEqual(new Vector3(42, 32, 4));
+    expect(mat).toEqual(new Matrix3(2, 2, 0, 1, -31, -5, 2, 7, -2));
+});
+
+test(".matrixTransMult()", () => {
+    const vec = new Vector3(5, -1, - 3);
+    const mat = new Matrix3(2, 35, 3, 4, 2, 7, 2, 3, -2);
+    const result = vec.matrixTransMult(mat);
+
+    expect(result).toBe(vec);
+    expect(vec).toEqual(new Vector3(34, -3, 13));
+    expect(mat).toEqual(new Matrix3(2, 35, 3, 4, 2, 7, 2, 3, -2));
+});
 
 test(".div()", () => {
     const vec1 = new Vector3(6, 3, 48);
@@ -232,6 +251,8 @@ test(".inverseScale()", () => {
     expect(vec3.y).toBeCloseTo(2 / 3, 10);
     expect(vec3.z).toBeCloseTo(-12, 10);
 });
+
+// TODO: inverse(): Vector3
 
 test(".mix()", () => {
     const vec1 = new Vector3(3, -2, 0);
