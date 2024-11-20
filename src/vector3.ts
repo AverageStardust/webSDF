@@ -77,6 +77,10 @@ export class Vector3 {
         return this.toString();
     }
 
+    get clone(): Vector3 {
+        return new Vector3(this.x, this.y, this.z);
+    }
+
     toString(): string {
         return `(${this.x}, ${this.y}, ${this.z})`
     }
@@ -85,9 +89,6 @@ export class Vector3 {
         return `(${this.x.toFixed(precision)}, ${this.y.toFixed(precision)}, ${this.z.toFixed(precision)})`;
     }
 
-    clone(): Vector3 {
-        return new Vector3(this.x, this.y, this.z);
-    }
     add(vector: Vector3): Vector3 {
         this.x += vector.x;
         this.y += vector.y;

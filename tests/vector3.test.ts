@@ -81,6 +81,25 @@ test(".string", () => {
         .toBe("(6, 4, 4)");
 });
 
+test(".clone", () => {
+    const vec1 = new Vector3(5, 87, 2);
+    const vec1Clone = vec1.clone;
+
+    expect(vec1Clone).toEqual(vec1);
+    expect(vec1Clone).not.toBe(vec1);
+
+
+    const vec2 = new Vector3(63, 13, 86);
+    const vec2Clone = vec2.clone;
+    const vec2CloneClone = vec2Clone.clone;
+
+    expect(vec2Clone).toEqual(vec2);
+    expect(vec2CloneClone).toEqual(vec2);
+    expect(vec2Clone).not.toBe(vec2);
+    expect(vec2CloneClone).not.toBe(vec2);
+    expect(vec2CloneClone).not.toBe(vec2Clone);
+});
+
 test(".toString()", () => {
     expect(new Vector3(5, 0, 2).toString())
         .toBe("(5, 0, 2)");
@@ -100,26 +119,6 @@ test(".toFixedString()", () => {
     expect(new Vector3(5.26, 745.234, 4).toFixedString())
         .toBe("(5.2600000000, 745.2340000000, 4.0000000000)");
 });
-
-test(".clone()", () => {
-    const vec1 = new Vector3(5, 87, 2);
-    const vec1Clone = vec1.clone();
-
-    expect(vec1Clone).toEqual(vec1);
-    expect(vec1Clone).not.toBe(vec1);
-
-
-    const vec2 = new Vector3(63, 13, 86);
-    const vec2Clone = vec2.clone();
-    const vec2CloneClone = vec2Clone.clone();
-
-    expect(vec2Clone).toEqual(vec2);
-    expect(vec2CloneClone).toEqual(vec2);
-    expect(vec2Clone).not.toBe(vec2);
-    expect(vec2CloneClone).not.toBe(vec2);
-    expect(vec2CloneClone).not.toBe(vec2Clone);
-});
-
 
 test(".add()", () => {
     const vec1 = new Vector3(3, -2, 0);
