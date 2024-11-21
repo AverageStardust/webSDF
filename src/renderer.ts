@@ -1,4 +1,5 @@
 import * as twgl from "twgl.js";
+import { World } from "./world";
 
 enum State {
     Stopped,
@@ -9,6 +10,8 @@ enum State {
 export class Renderer {
     gl: WebGLRenderingContext;
     canvas: HTMLCanvasElement;
+    world: World;
+
     bufferInfo: twgl.BufferInfo;
     programInfo: twgl.ProgramInfo | null = null;
 
@@ -17,11 +20,13 @@ export class Renderer {
     state = State.Stopped;
     frameHandle: number | null = null;
 
-    constructor(canvas: HTMLCanvasElement) {
+    constructor(canvas: HTMLCanvasElement, world: World) {
         const gl = canvas.getContext("webgl");
         if (gl === null) throw Error("No WEBGL support");
         this.gl = gl;
         this.canvas = canvas;
+
+        this.world = world;
 
         const arrays = {
             position: [-1, -1, 0, 1, -1, 0, -1, 1, 0, -1, 1, 0, 1, -1, 0, 1, 1, 0], // screen quad
@@ -52,7 +57,7 @@ export class Renderer {
         this.frameHandle = requestAnimationFrame(this.frame.bind(this));
     }
 
-    frame(_time: number) {
+    frame(time: number) {
         this.frameHandle = null;
 
         if (!this.programInfo) {
@@ -60,11 +65,22 @@ export class Renderer {
             return;
         };
 
-        const gl = this.gl;
-        gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+        const gl = this.gl, canvas = this.canvas, world = this.world;
+        gl.viewport(0, 0, canvas.width, canvas.height);
+
+        const uniforms = {
+            time: time * 0.001,
+            resolution: [canvas.width, canvas.height],
+            viewport: world.camera.getViewport(canvas.width, canvas.height),
+            nearPlane: world.camera.nearPlane,
+            farPlane: world.camera.farPlane,
+            cameraPosition: world.camera.position.array,
+            cameraRotation: world.camera.rotation.array
+        };
 
         gl.useProgram(this.programInfo.program);
         twgl.setBuffersAndAttributes(gl, this.programInfo, this.bufferInfo);
+        twgl.setUniforms(this.programInfo, uniforms);
         twgl.drawBufferInfo(gl, this.bufferInfo);
 
         this.requestFrame();
