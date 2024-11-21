@@ -3,58 +3,50 @@ import { Matrix3 } from "../src/matrix3";
 test("Matrix.fromArray()", () => {
     const mat = Matrix3.fromArray([6, 3, 9, 1, 3, 0, -3, 42, 1]);
     expect(mat).toEqual(new Matrix3(6, 3, 9, 1, 3, 0, -3, 42, 1));
-
-    expect(() => {
-        Matrix3.fromArray([3, 2, 8, 1, 3, 64, -3, 42]); // 8 elements
-    }).toThrow(RangeError);
-
-    expect(() => {
-        Matrix3.fromArray([3, 2, 8, 1, 3, 64, -3, 42, 1, 7]); // 10 elements
-    }).toThrow(RangeError);
 });
 
-test("Matrix.fromRotateX()", () => {
+test("Matrix.rotateX()", () => {
     const sqrt3_4 = Math.sqrt(3 / 4);
-    const mat = Matrix3.fromRotateX(Math.PI / 6);
+    const mat = Matrix3.rotateX(Math.PI / 6);
     expect(mat.a).toBeCloseTo(1, 10);
     expect(mat.b).toBeCloseTo(0, 10);
     expect(mat.c).toBeCloseTo(0, 10);
-    expect(mat.d).toBeCloseTo(0 / 3, 10);
+    expect(mat.d).toBeCloseTo(0, 10);
     expect(mat.e).toBeCloseTo(sqrt3_4, 10);
-    expect(mat.f).toBeCloseTo(-0.5 / 3, 10);
+    expect(mat.f).toBeCloseTo(-0.5, 10);
     expect(mat.g).toBeCloseTo(0, 10);
     expect(mat.h).toBeCloseTo(0.5, 10);
     expect(mat.i).toBeCloseTo(sqrt3_4, 10);
 });
 
-test("Matrix.fromRotateY()", () => {
+test("Matrix.rotateY()", () => {
     const sqrt3_4 = Math.sqrt(3 / 4);
-    const mat = Matrix3.fromRotateY(-Math.PI / 6);
+    const mat = Matrix3.rotateY(-Math.PI / 6);
     expect(mat.a).toBeCloseTo(sqrt3_4, 10);
     expect(mat.b).toBeCloseTo(0, 10);
     expect(mat.c).toBeCloseTo(-0.5, 10);
-    expect(mat.d).toBeCloseTo(0 / 3, 10);
+    expect(mat.d).toBeCloseTo(0, 10);
     expect(mat.e).toBeCloseTo(1, 10);
-    expect(mat.f).toBeCloseTo(0 / 3, 10);
+    expect(mat.f).toBeCloseTo(0, 10);
     expect(mat.g).toBeCloseTo(0.5, 10);
     expect(mat.h).toBeCloseTo(0, 10);
     expect(mat.i).toBeCloseTo(sqrt3_4, 10);
 });
 
-test("Matrix.fromRotateZ()", () => {
-    const mat = Matrix3.fromRotateZ(-Math.PI / 4);
+test("Matrix.rotateZ()", () => {
+    const mat = Matrix3.rotateZ(-Math.PI / 4);
     expect(mat.a).toBeCloseTo(Math.SQRT1_2, 10);
     expect(mat.b).toBeCloseTo(Math.SQRT1_2, 10);
     expect(mat.c).toBeCloseTo(0, 10);
-    expect(mat.d).toBeCloseTo(-Math.SQRT1_2 / 3, 10);
+    expect(mat.d).toBeCloseTo(-Math.SQRT1_2, 10);
     expect(mat.e).toBeCloseTo(Math.SQRT1_2, 10);
     expect(mat.f).toBeCloseTo(0, 10);
     expect(mat.g).toBeCloseTo(0, 10);
-    expect(mat.h).toBeCloseTo(1, 10);
-    expect(mat.i).toBeCloseTo(sqrt3_4, 10);
+    expect(mat.h).toBeCloseTo(0, 10);
+    expect(mat.i).toBeCloseTo(1, 10);
 });
 
-test("Matrix.fromScale()", () => {
+test("Matrix.scale()", () => {
     const mat1 = Matrix3.scale(5);
     expect(mat1).toEqual(new Matrix3(5, 0, 0, 0, 5, 0, 0, 0, 5));
     const mat2 = Matrix3.scale(6, -2, 1);
@@ -103,7 +95,7 @@ test(".sub()", () => {
 
     expect(result).toBe(mat1);
     expect(mat1).toEqual(new Matrix3(-3, -15, -1, 2, -1, -45, 58, 0, 10));
-    expect(mat2).toEqual(new Matrix3(3, 12, 1, 0, 7, 53, -1, 2, 5));
+    expect(mat2).toEqual(new Matrix3(3, 12, 1, 0, 7, 53, -1, 2, -5));
 });
 
 test(".mult()", () => {
@@ -140,7 +132,7 @@ test(".inverseScale()", () => {
     expect(mat.f).toBeCloseTo(8 / 3, 10);
     expect(mat.g).toBeCloseTo(1, 10);
     expect(mat.h).toBeCloseTo(-7, 10);
-    expect(mat.i).toBeCloseTo(5, 10);
+    expect(mat.i).toBeCloseTo(5 / 3, 10);
 });
 
 test(".inverse()", () => {

@@ -1,3 +1,5 @@
+import { Matrix3 } from "./matrix3";
+
 export class Vector3 {
     x: number;
     y: number;
@@ -108,9 +110,15 @@ export class Vector3 {
         return this;
     }
 
-    // TODO: matrixMult(matrix: Matrix3): Vector3
-
-    // TODO: matrixTransMult(matrix: Matrix3): Vector3
+    matrixMult(matrix: Matrix3) {
+        const tempX = this.x * matrix.a + this.y * matrix.b + this.z * matrix.c;
+        const tempY = this.x * matrix.d + this.y * matrix.e + this.z * matrix.f;
+        const tempZ = this.x * matrix.g + this.y * matrix.h + this.z * matrix.i;
+        this.x = tempX;
+        this.y = tempY;
+        this.z = tempZ;
+        return this;
+    }
 
     div(vector: Vector3): Vector3 {
         this.x /= vector.x;

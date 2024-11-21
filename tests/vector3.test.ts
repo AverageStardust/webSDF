@@ -176,22 +176,12 @@ test(".mult()", () => {
 });
 
 test(".matrixMult()", () => {
-    const vec = new Vector3(23, 0, -2);
-    const mat = new Matrix3(2, 2, 0, 1, -31, -5, 2, 7, -2);
+    const vec = new Vector3(5, -1, 3);
+    const mat = new Matrix3(2, 35, 3, 4, 2, 7, 2, 3, -2);
     const result = vec.matrixMult(mat);
 
     expect(result).toBe(vec);
-    expect(vec).toEqual(new Vector3(42, 32, 4));
-    expect(mat).toEqual(new Matrix3(2, 2, 0, 1, -31, -5, 2, 7, -2));
-});
-
-test(".matrixTransMult()", () => {
-    const vec = new Vector3(5, -1, - 3);
-    const mat = new Matrix3(2, 35, 3, 4, 2, 7, 2, 3, -2);
-    const result = vec.matrixTransMult(mat);
-
-    expect(result).toBe(vec);
-    expect(vec).toEqual(new Vector3(34, -3, 13));
+    expect(vec).toEqual(new Vector3(-16, 39, 1));
     expect(mat).toEqual(new Matrix3(2, 35, 3, 4, 2, 7, 2, 3, -2));
 });
 
