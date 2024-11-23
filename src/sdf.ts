@@ -1,4 +1,4 @@
-import { Vec3Input, Value, ValueTypes, FloatInput, Variable, clearVariableIdentifiers, parseVec3Input, parseFloatInput } from "./sdfValue";
+import { Vec3Input, Value, ValueTypes, FloatInput, Variable, clearVariableIdentifiers, parseVec3Input, parseFloatInput, Uniform } from "./sdfValue";
 
 let vertShader: string
 let fragTemplate: string;
@@ -22,20 +22,28 @@ export interface ShaderCode<T extends ValueTypes> {
 export abstract class AbstractSdf {
     abstract isNew: boolean;
 
-    getProgram(): [string, string] {
+    getProgram(): [string, string, Uniform<ValueTypes, unknown>[]] {
         const position = new Variable<"vec3">;
         const {
             body: sdfBody,
             result: distance
         } = this.getCode(position);
 
+        const uniforms = this.getUniforms();
+        const uniformDeclarations = uniforms.map((uni) => uni.getDeclaration()).join("\n");
+
         const sdf = `float sdf(vec3 ${position}) {${sdfBody}\n    return ${distance};\n}`;
-        const fragShader = fragTemplate.replace("#SDF_FUNCTION", sdf);
+
+        const fragShader = fragTemplate
+            .replace("#WORLD_UNIFORMS", uniformDeclarations)
+            .replace("#SDF_FUNCTION", sdf);
 
         clearVariableIdentifiers();
 
-        return [vertShader, fragShader];
+        return [vertShader, fragShader, uniforms];
     }
+
+    abstract getUniforms(): Uniform<ValueTypes, unknown>[]
 
     abstract getCode(positionInput: Vec3Input): ShaderCode<"float">;
 }
@@ -99,6 +107,21 @@ export abstract class CompoundSdf extends AbstractSdf {
         }
     }
 
+    getUniforms() {
+        const uniforms: Uniform<ValueTypes, unknown>[] = [];
+
+        for (const child of this.children) {
+            uniforms.push(...child.getUniforms());
+        }
+
+        uniforms.push(...this.getSelfUniforms());
+
+        return uniforms;
+    }
+
+
+    abstract getSelfUniforms(): Uniform<ValueTypes, unknown>[]
+
     getPositionCode(positionInput: Vec3Input): ShaderCode<"vec3"> {
         return { body: "", result: parseVec3Input(positionInput) };
     }
@@ -107,6 +130,5 @@ export abstract class CompoundSdf extends AbstractSdf {
         return { body: "", result: parseFloatInput(distanceInput[0]) };
     }
 }
-
 
 await init();

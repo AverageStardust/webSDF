@@ -1,5 +1,5 @@
 import { AbstractSdf, CompoundSdf, ShaderCode } from "./sdf";
-import { inverseMat3, Mat3Input, parseMat3Input, parseVec3Input, Value, Variable, Vec3Input } from "./sdfValue";
+import { filterUniforms, inverseMat3, Mat3Input, parseMat3Input, parseVec3Input, Value, Variable, Vec3Input } from "./sdfValue";
 
 export class Translate extends CompoundSdf {
     declare children: [AbstractSdf];
@@ -8,6 +8,10 @@ export class Translate extends CompoundSdf {
     constructor(translation: Vec3Input, child: AbstractSdf) {
         super(child);
         this.translation = parseVec3Input(translation);
+    }
+
+    getSelfUniforms() {
+        return filterUniforms([this.translation]);
     }
 
     getPositionCode(positionInput: Vec3Input): ShaderCode<"vec3"> {
@@ -26,6 +30,10 @@ export class Rotate extends CompoundSdf {
     constructor(rotation: Mat3Input, child: AbstractSdf) {
         super(child);
         this.inverseRotation = inverseMat3(parseMat3Input(rotation));
+    }
+
+    getSelfUniforms() {
+        return filterUniforms([this.inverseRotation]);
     }
 
     getPositionCode(positionInput: Vec3Input): ShaderCode<"vec3"> {

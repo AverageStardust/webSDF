@@ -1,9 +1,13 @@
 import { PrimitiveSdf } from "./sdf";
-import { FloatInput, parseFloatInput, parseVec3Input, Value, Variable, Vec3Input } from "./sdfValue";
+import { filterUniforms, FloatInput, parseFloatInput, parseVec3Input, Uniform, Value, ValueTypes, Variable, Vec3Input } from "./sdfValue";
 
 export class Empty extends PrimitiveSdf {
     constructor() {
         super();
+    }
+
+    getUniforms(): Uniform<ValueTypes, unknown>[] {
+        return [];
     }
 
     getPrimitiveCode(_positionInput: Vec3Input) {
@@ -25,6 +29,10 @@ export class Sphere extends PrimitiveSdf {
     constructor(radiusInput: FloatInput) {
         super();
         this.radius = parseFloatInput(radiusInput);
+    }
+
+    getUniforms(): Uniform<ValueTypes, unknown>[] {
+        return filterUniforms([this.radius]);
     }
 
     getPrimitiveCode(positionInput: Vec3Input) {

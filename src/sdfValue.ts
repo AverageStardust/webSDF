@@ -31,6 +31,10 @@ export function clearVariableIdentifiers() {
     clearIdentifiers("var");
 }
 
+export function filterUniforms(values: Value<ValueTypes>[]): Uniform<ValueTypes, unknown>[] {
+    return values.filter((val) => val instanceof Uniform);
+}
+
 export function parseFloatInput(input: FloatInput): Value<"float"> {
     if (typeof input === "number") {
         return new Expression<"float">(toFloat(input));
@@ -59,9 +63,9 @@ export function parseMat3Input(input: Mat3Input): Value<"mat3"> {
 
 export function inverseMat3(input: Value<"mat3">): Value<"mat3"> {
     if (input instanceof Mat3Uniform) {
-        return new InverseMat3Uniform(input.value);
+        return new InverseMat3Uniform(input);
     } else if (input instanceof InverseMat3Uniform) {
-        return new Mat3Uniform(input.value);
+        return input.getValue();
     } else if (input instanceof Expression || input instanceof Variable) {
         return new Expression<"mat3">(`inverse(${input})`);
     } else {
@@ -108,39 +112,78 @@ export class Expression<T extends ValueTypes> extends Value<T> {
 
 
 export abstract class Uniform<T extends ValueTypes, U> extends Identifier<T> {
-    value: U;
+    protected value: U;
 
     constructor(value: U) {
         super("uni");
         this.value = value;
     }
 
+    setValue(value: U) {
+        this.value = value;
+    }
+
     abstract getValue(): unknown;
+    abstract getShaderValue(): unknown;
+    abstract getDeclaration(): unknown;
 }
 
 export class FloatUniform extends Uniform<"float", number> {
     getValue() {
         return this.value;
     }
+
+    getShaderValue() {
+        return this.value;
+    }
+
+    getDeclaration() {
+        return `uniform float ${this.identifier};`;
+    }
 }
 
 export class Vec3Uniform extends Uniform<"vec3", Vector3> {
     getValue() {
+        return this.value.clone;
+    }
+
+    getShaderValue() {
         return this.value.array;
+    }
+
+    getDeclaration() {
+        return `uniform vec3 ${this.identifier};`;
     }
 }
 
 export class Mat3Uniform extends Uniform<"mat3", Matrix3> {
     getValue() {
+        return this.value.clone;
+    }
+
+    getShaderValue() {
         return this.value.transposeArray;
+    }
+
+    getDeclaration() {
+        return `uniform mat3 ${this.identifier};`;
     }
 }
 
-class InverseMat3Uniform extends Uniform<"mat3", Matrix3> {
+class InverseMat3Uniform extends Uniform<"mat3", Mat3Uniform> {
     getValue() {
-        const inverse = this.value.clone.inverse();
-        if (inverse === null) throw Error("Failed to evaluate inverse of mat3");
-        return inverse.transposeArray;
+        const inverse = this.value.getValue().clone.inverse();
+        if (!inverse)
+            throw Error("Failed to find inverse of mat3 uniform");
+        return inverse;
+    }
+
+    getShaderValue() {
+        return this.getValue().transposeArray;
+    }
+
+    getDeclaration() {
+        return `uniform mat3 ${this.identifier};`;
     }
 }
 
