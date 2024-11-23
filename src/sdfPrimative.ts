@@ -1,7 +1,7 @@
 import { PrimitiveSdf } from "./sdf";
 import { FloatInput, parseFloatInput, parseVec3Input, Value, Variable, Vec3Input } from "./sdfValue";
 
-export class EmptySdf extends PrimitiveSdf {
+export class Empty extends PrimitiveSdf {
     constructor() {
         super();
     }
@@ -19,7 +19,7 @@ export class EmptySdf extends PrimitiveSdf {
     }
 }
 
-export class SphereSdf extends PrimitiveSdf {
+export class Sphere extends PrimitiveSdf {
     radius: Value<"float">;
 
     constructor(radiusInput: FloatInput) {

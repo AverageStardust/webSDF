@@ -1,5 +1,5 @@
 import { Renderer } from "./renderer";
-import { SphereSdf } from "./sdfPrimative";
+import { Sphere } from "./sdfPrimative";
 import { Vector3 } from "./vector3";
 import { World } from "./world";
 
@@ -9,7 +9,7 @@ if (!canvas || !(canvas instanceof HTMLCanvasElement))
 
 const world = new World();
 world.camera.position = new Vector3(5, 7, 3);
-world.sdf = new SphereSdf(0.8);
+world.sdf = new Sphere(0.8);
 
 const renderer = new Renderer(canvas, world);
 
