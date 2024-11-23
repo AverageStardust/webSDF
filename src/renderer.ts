@@ -37,7 +37,7 @@ export class Renderer {
 
     start() {
         if (this.state === State.Running) return;
-
+        this.state = State.Running;
         this.requestFrame();
     }
 
@@ -51,10 +51,6 @@ export class Renderer {
 
     requestFrame() {
         this.frameHandle = requestAnimationFrame(this.frame.bind(this));
-        this.maintainProgram();
-    }
-
-    maintainProgram() {
         if (!this.world.sdf.isNew) return;
         this.setProgram(...this.world.sdf.getProgram());
     }
@@ -107,7 +103,8 @@ export class Renderer {
 
         this.programInfo = result;
         this.programVersion = version;
-        if (this.state === State.WaitingForProgram) this.start();
+        if (this.state === State.WaitingForProgram)
+            this.start();
     }
 
     onProgramError(msg: string, _lineOffset?: number) {

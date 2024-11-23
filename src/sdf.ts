@@ -92,7 +92,7 @@ export abstract class CompoundSdf extends AbstractSdf {
             result: transformedDistance
         } = this.getDistanceCode(childDistances);
 
-        this.isSelfNew = true;
+        this.isSelfNew = false;
         return {
             body: `${positionBody}${childBodies.join("")}${distanceBody}`,
             result: transformedDistance
