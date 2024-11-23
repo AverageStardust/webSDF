@@ -48,3 +48,31 @@ export class Sphere extends PrimitiveSdf {
         }
     }
 }
+
+export class Box extends PrimitiveSdf {
+    size: Value<"vec3">;
+
+    constructor(sizeInput: Vec3Input) {
+        super();
+        this.size = parseVec3Input(sizeInput);
+    }
+
+    getUniforms(): Uniform<ValueTypes, unknown>[] {
+        return filterUniforms([this.size]);
+    }
+
+    getPrimitiveCode(positionInput: Vec3Input) {
+        const position = parseVec3Input(positionInput);
+        const q = new Variable<"vec3">();
+        const result = new Variable<"float">();
+
+        const body = `
+    vec3 ${q} = abs(${position}) - ${this.size};
+    float ${result} = length(max(${q}, 0.0)) + min(max(${q}.x, max(${q}.y, ${q}.z)), 0.0);`;
+
+        return {
+            body,
+            result
+        }
+    }
+}
