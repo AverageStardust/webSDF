@@ -1,6 +1,5 @@
 import * as twgl from "twgl.js";
 import { World } from "./world";
-import { Variable } from "./sdfValue";
 
 enum State {
     Stopped,

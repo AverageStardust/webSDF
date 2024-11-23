@@ -76,6 +76,7 @@ function toFloat(value: number) {
 }
 
 export abstract class Value<_T extends ValueTypes> {
+    declare OPAQUE_SHADER_VALUE: never;
     abstract toString(): string;
 }
 
