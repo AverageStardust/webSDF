@@ -1,5 +1,6 @@
 import * as twgl from "twgl.js";
 import { World } from "./world";
+import { Variable } from "./sdfValue";
 
 enum State {
     Stopped,
@@ -8,7 +9,7 @@ enum State {
 }
 
 export class Renderer {
-    gl: WebGLRenderingContext;
+    gl: WebGL2RenderingContext;
     canvas: HTMLCanvasElement;
     world: World;
 
@@ -21,8 +22,8 @@ export class Renderer {
     frameHandle: number | null = null;
 
     constructor(canvas: HTMLCanvasElement, world: World) {
-        const gl = canvas.getContext("webgl");
-        if (gl === null) throw Error("No WEBGL support");
+        const gl = canvas.getContext("webgl2");
+        if (gl === null) throw Error("No WEBGL 2.0 support");
         this.gl = gl;
         this.canvas = canvas;
 
@@ -37,12 +38,7 @@ export class Renderer {
     start() {
         if (this.state === State.Running) return;
 
-        if (this.programInfo) {
-            this.state = State.Running;
-            this.requestFrame();
-        } else {
-            this.state = State.WaitingForProgram;
-        }
+        this.requestFrame();
     }
 
     stop() {
@@ -55,6 +51,12 @@ export class Renderer {
 
     requestFrame() {
         this.frameHandle = requestAnimationFrame(this.frame.bind(this));
+        this.maintainProgram();
+    }
+
+    maintainProgram() {
+        if (!this.world.sdf.isNew) return;
+        this.setProgram(...this.world.sdf.getProgram());
     }
 
     frame(time: number) {
@@ -86,8 +88,8 @@ export class Renderer {
         this.requestFrame();
     }
 
-    setProgram(vertexSource: string, fragmentSource: string) {
-        twgl.createProgramInfo(this.gl, [vertexSource, fragmentSource], {
+    setProgram(vertSource: string, fragSource: string) {
+        twgl.createProgramInfo(this.gl, [vertSource, fragSource], {
             callback: this.onProgramCompiled.bind(this, this.nextProgramVersion),
             errorCallback: this.onProgramError.bind(this)
         });
