@@ -14,23 +14,28 @@ out vec4 fragColor;
 
 #SDF_FUNCTION
 
-vec3 castRay(vec3 position, vec3 direction, float init_t) {
+float castRay(vec3 position, vec3 direction, float init_t) {
     float t = init_t;
     
-    float distance;
-    do {
-        distance = sdf(position + direction * t);
+    float distance = sdf(position + direction * t);
+    while(distance > 0.01) {
         t += distance;
-    } while(distance > 0.01 && t < farPlane);
+        if(t > farPlane) return farPlane;
+        distance = sdf(position + direction * t);
+    };
 
-    return position + direction * t;
+    return t;
 }
 
 void main() {
     vec3 direction = normalize(vec3(screenCoord * viewport, -nearPlane));
     direction *= cameraRotation;
 
-    vec3 worldPosition = castRay(cameraPosition, direction, nearPlane);
+    vec3 worldPosition = cameraPosition + castRay(cameraPosition, direction, nearPlane) * direction;
 
-    fragColor = vec4(worldPosition, 1.0);
+    if(length(worldPosition) > 100.0) {
+        fragColor = vec4(0.0, 0.0, 0.0, 1.0);
+    } else {
+        fragColor = vec4(mod(worldPosition, 1.0), 1.0);
+    }
 }

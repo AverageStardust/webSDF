@@ -1,5 +1,6 @@
 import { Renderer } from "./renderer";
 import { Sphere } from "./sdfPrimative";
+import { Translate } from "./sdfTransform";
 import { Vector3 } from "./vector3";
 import { World } from "./world";
 
@@ -8,8 +9,7 @@ if (!canvas || !(canvas instanceof HTMLCanvasElement))
     throw Error("Canvas not found");
 
 const world = new World();
-world.camera.position = new Vector3(5, 7, 3);
-world.sdf = new Sphere(0.8);
+world.sdf = new Translate(new Vector3(0, 0, -5), new Sphere(0.8));
 
 const renderer = new Renderer(canvas, world);
 

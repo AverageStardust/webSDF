@@ -1,4 +1,4 @@
-import { Vec3Input, Value, ValueTypes, FloatInput, Variable } from "./sdfValue";
+import { Vec3Input, Value, ValueTypes, FloatInput, Variable, clearVariableIdentifiers } from "./sdfValue";
 
 let vertShader: string
 let fragTemplate: string;
@@ -32,6 +32,8 @@ export abstract class AbstractSdf {
         const sdf = `float sdf(vec3 ${position}) {${sdfBody}\n    return ${distance};\n}`;
         const fragShader = fragTemplate.replace("#SDF_FUNCTION", sdf);
 
+        clearVariableIdentifiers();
+
         return [vertShader, fragShader];
     }
 
@@ -55,7 +57,7 @@ export abstract class CompoundSdf extends AbstractSdf {
     protected children: AbstractSdf[];
     protected isSelfNew = true;
 
-    constructor(children: AbstractSdf[]) {
+    constructor(...children: AbstractSdf[]) {
         super();
         this.children = children;
     }
@@ -97,9 +99,13 @@ export abstract class CompoundSdf extends AbstractSdf {
         }
     }
 
-    abstract getPositionCode(positionInput: Vec3Input): ShaderCode<"vec3">
+    getPositionCode(positionInput: Vec3Input): ShaderCode<"vec3"> {
+        return { body: "", result: positionInput };
+    }
 
-    abstract getDistanceCode(...distanceInput: FloatInput[]): ShaderCode<"float">
+    getDistanceCode(...distanceInput: FloatInput[]): ShaderCode<"float"> {
+        return { body: "", result: distanceInput[0] };
+    }
 }
 
 
