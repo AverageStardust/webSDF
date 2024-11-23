@@ -62,10 +62,8 @@ export function parseMat3Input(input: Mat3Input): Value<"mat3"> {
 }
 
 export function inverseMat3(input: Value<"mat3">): Value<"mat3"> {
-    if (input instanceof Mat3Uniform) {
-        return new InverseMat3Uniform(input);
-    } else if (input instanceof InverseMat3Uniform) {
-        return input.getValue();
+    if (input instanceof Mat3Uniform || input instanceof InverseMat3Uniform) {
+        return input.getInverse();
     } else if (input instanceof Expression || input instanceof Variable) {
         return new Expression<"mat3">(`inverse(${input})`);
     } else {
@@ -161,6 +159,10 @@ export class Mat3Uniform extends Uniform<"mat3", Matrix3> {
         return this.value.clone;
     }
 
+    getInverse() {
+        return new InverseMat3Uniform(this);
+    }
+
     getShaderValue() {
         return this.value.transposeArray;
     }
@@ -176,6 +178,10 @@ class InverseMat3Uniform extends Uniform<"mat3", Mat3Uniform> {
         if (!inverse)
             throw Error("Failed to find inverse of mat3 uniform");
         return inverse;
+    }
+
+    getInverse() {
+        return this.value;
     }
 
     getShaderValue() {
