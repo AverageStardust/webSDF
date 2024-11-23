@@ -21,6 +21,7 @@ export class Renderer extends EventTarget {
     nextProgramVersion = 1;
     state = State.Stopped;
     frameHandle: number | null = null;
+    lastFrameTime = 0;
 
     constructor(canvas: HTMLCanvasElement, world: World) {
         super();
@@ -60,7 +61,10 @@ export class Renderer extends EventTarget {
 
     frame(time: number) {
         this.frameHandle = null;
-        this.dispatchEvent(new Event("frame"));
+
+        const delta = time - this.lastFrameTime;
+        this.lastFrameTime = time;
+        this.dispatchEvent(new FrameEvent(time, delta));
 
         if (!this.programInfo) {
             this.state = State.WaitingForProgram;
@@ -95,7 +99,7 @@ export class Renderer extends EventTarget {
     setProgram(vertSource: string, fragSource: string, uniforms: Uniform<ValueTypes, unknown>[]) {
         twgl.createProgramInfo(this.gl, [vertSource, fragSource], {
             callback: this.onProgramCompiled.bind(this, this.nextProgramVersion, uniforms),
-            errorCallback: this.onProgramError.bind(this)
+            errorCallback: this.onProgramError.bind(this, fragSource)
         });
         this.nextProgramVersion++;
     }
@@ -117,8 +121,20 @@ export class Renderer extends EventTarget {
             this.start();
     }
 
-    onProgramError(msg: string, _lineOffset?: number) {
+    onProgramError(frag: string, msg: string, _lineOffset?: number) {
         this.stop();
+        console.warn(frag);
         throw Error("Program compilation failed at:\n" + msg);
+    }
+}
+
+export class FrameEvent extends Event {
+    readonly time: number;
+    readonly delta: number;
+
+    constructor(time: number, delta: number) {
+        super("frame");
+        this.time = time;
+        this.delta = delta;
     }
 }
