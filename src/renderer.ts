@@ -67,17 +67,17 @@ export class Renderer extends EventTarget {
             return;
         };
 
-        const gl = this.gl, canvas = this.canvas, world = this.world;
+        const gl = this.gl, canvas = this.canvas, world = this.world, camera = world.camera;
         gl.viewport(0, 0, canvas.width, canvas.height);
 
         const uniforms: Record<string, unknown> = {
             time: time * 0.001,
             resolution: [canvas.width, canvas.height],
-            viewport: world.camera.getViewport(canvas.width, canvas.height),
-            nearPlane: world.camera.nearPlane,
-            farPlane: world.camera.farPlane,
-            cameraPosition: world.camera.position.array,
-            cameraRotation: world.camera.rotation.array
+            viewport: camera.getViewport(canvas.width, canvas.height),
+            nearRadius: camera.nearRadius,
+            farRadius: camera.farRadius,
+            cameraPosition: camera.position.array,
+            cameraRotation: camera.rotation.array
         };
 
         for (const uniform of this.sdfUniforms) {

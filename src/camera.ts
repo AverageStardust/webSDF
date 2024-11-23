@@ -5,14 +5,14 @@ export class Camera {
     position = Vector3.zero();
     roll = 0;
     pitch = 0;
-    nearPlane: number;
-    farPlane: number;
+    nearRadius: number;
+    farRadius: number;
     fov: number;
 
-    constructor(fov = 70, nearPlane = 0.1, farPlane = 10000) {
+    constructor(fov = 70, nearRadius = 0.1, farRadius = 10000) {
         this.fov = fov;
-        this.nearPlane = nearPlane;
-        this.farPlane = farPlane;
+        this.nearRadius = nearRadius;
+        this.farRadius = farRadius;
     }
 
     get rotation(): Matrix3 {
@@ -21,7 +21,7 @@ export class Camera {
 
     getViewport(screenWidth: number, screenHeight: number): [number, number] {
         const angle = this.fov / 360 * Math.PI;
-        const viewportWidth = Math.tan(angle) * this.nearPlane * 2;
+        const viewportWidth = Math.tan(angle) * this.nearRadius * 2;
         const viewportHeight = viewportWidth / screenWidth * screenHeight;
 
         return [viewportWidth, viewportHeight];
