@@ -56,8 +56,13 @@ test("Matrix.scale()", () => {
 });
 
 test(".array", () => {
-    const mat = new Matrix3(6, 3, 54, 1, -6, 0, -3, 42, 1);
-    expect(mat.array).toEqual([6, 3, 54, 1, -6, 0, -3, 42, 1]);
+    const mat = new Matrix3(6, 2, 54, 1, -6, 0, -3, 42, 1);
+    expect(mat.array).toEqual([6, 2, 54, 1, -6, 0, -3, 42, 1]);
+});
+
+test(".transposeArray", () => {
+    const mat = new Matrix3(6, 2, 54, 1, -6, 0, -3, 42, 1);
+    expect(mat.transposeArray).toEqual([6, 1, -3, 2, -6, 42, 54, 0, 1]);
 });
 
 test(".determinant", () => {
@@ -77,6 +82,20 @@ test(".clone", () => {
     expect(mat).toEqual(matClone);
     expect(matClone).toEqual(matCloneClone);
 });
+
+
+test(".toString()", () => {
+    expect(new Matrix3(0, -3, 0.25, 2, 6, 8, 57, 2, -5).toString())
+        .toBe("(0, -3, 0.25, 2, 6, 8, 57, 2, -5)");
+});
+
+test(".toFixedString()", () => {
+    expect(new Matrix3(0, -3.1415, 0.76, 2, 6, 8.04, 57.4, 2, -5.3).toFixedString(1))
+        .toBe("(0.0, -3.1, 0.8, 2.0, 6.0, 8.0, 57.4, 2.0, -5.3)");
+    expect(new Matrix3(0, -3.1415, 0.76, 2, 6, 8.04, 57.4, 2, -5.3).toFixedString())
+        .toBe("(0.00, -3.14, 0.76, 2.00, 6.00, 8.04, 57.40, 2.00, -5.30)");
+});
+
 
 test(".add()", () => {
     const mat1 = new Matrix3(0, -3, 0, 2, 6, 8, 57, 2, -5);

@@ -85,7 +85,7 @@ export class Vector3 {
         return `(${this.x}, ${this.y}, ${this.z})`
     }
 
-    toFixedString(precision: number = 10): string {
+    toFixedString(precision: number = 2): string {
         return `(${this.x.toFixed(precision)}, ${this.y.toFixed(precision)}, ${this.z.toFixed(precision)})`;
     }
 

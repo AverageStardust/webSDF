@@ -104,10 +104,10 @@ test(".clone", () => {
 test(".toString()", () => {
     expect(new Vector3(5, 0, 2).toString())
         .toBe("(5, 0, 2)");
-    expect(new Vector3(4, 6, -1).toString())
-        .toBe("(4, 6, -1)");
-    expect(new Vector3(6, 4, 4).toString())
-        .toBe("(6, 4, 4)");
+    expect(new Vector3(4, 6.25, -1).toString())
+        .toBe("(4, 6.25, -1)");
+    expect(new Vector3(6, 4, 4.5).toString())
+        .toBe("(6, 4, 4.5)");
 });
 
 test(".toFixedString()", () => {
@@ -118,7 +118,7 @@ test(".toFixedString()", () => {
     expect(new Vector3(Math.PI, 3.8, 9.43).toFixedString(5))
         .toBe("(3.14159, 3.80000, 9.43000)");
     expect(new Vector3(5.26, 745.234, 4).toFixedString())
-        .toBe("(5.2600000000, 745.2340000000, 4.0000000000)");
+        .toBe("(5.26, 745.23, 4.00)");
 });
 
 test(".add()", () => {

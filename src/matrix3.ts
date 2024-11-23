@@ -82,6 +82,13 @@ export class Matrix3 {
             this.g, this.h, this.i];
     }
 
+    get transposeArray(): Matrix3Array {
+        return [
+            this.a, this.d, this.g,
+            this.b, this.e, this.h,
+            this.c, this.f, this.i];
+    }
+
     get determinant(): number {
         return (
             this.a * (this.e * this.i - this.f * this.h) -
@@ -89,11 +96,26 @@ export class Matrix3 {
             this.c * (this.d * this.h - this.e * this.g));
     }
 
+    get string(): string {
+        return this.toString();
+    }
+
     get clone(): Matrix3 {
         return new Matrix3(
             this.a, this.b, this.c,
             this.d, this.e, this.f,
             this.g, this.h, this.i);
+    }
+
+    toString(): string {
+        return `(${this.a}, ${this.b}, ${this.c}, ${this.d}, ${this.e}, ${this.f}, ${this.g}, ${this.h}, ${this.i})`;
+    }
+
+    toFixedString(precision: number = 2): string {
+        return `(\
+${this.a.toFixed(precision)}, ${this.b.toFixed(precision)}, ${this.c.toFixed(precision)}, \
+${this.d.toFixed(precision)}, ${this.e.toFixed(precision)}, ${this.f.toFixed(precision)}, \
+${this.g.toFixed(precision)}, ${this.h.toFixed(precision)}, ${this.i.toFixed(precision)})`;
     }
 
     add(matrix: Matrix3): Matrix3 {
