@@ -17,8 +17,10 @@ export class Translate extends CompoundSdf {
     getPositionCode(positionInput: Vec3Input): ShaderCode<"vec3"> {
         const position = parseVec3Input(positionInput);
         const transformedPosition = new Variable<"vec3">();
+
         const body = `
     vec3 ${transformedPosition} = ${position} - ${this.translation};`;
+
         return { body, result: transformedPosition };
     }
 }
@@ -39,8 +41,10 @@ export class Rotate extends CompoundSdf {
     getPositionCode(positionInput: Vec3Input): ShaderCode<"vec3"> {
         const position = parseVec3Input(positionInput);
         const transformedPosition = new Variable<"vec3">();
+
         const body = `
     vec3 ${transformedPosition} = ${this.inverseRotation} * ${position};`;
+
         return { body, result: transformedPosition };
     }
 }
@@ -61,16 +65,20 @@ export class Scale extends CompoundSdf {
     getPositionCode(positionInput: Vec3Input): ShaderCode<"vec3"> {
         const position = parseVec3Input(positionInput);
         const transformedPosition = new Variable<"vec3">();
+
         const body = `
     vec3 ${transformedPosition} = ${position} / ${this.scaling};`;
+
         return { body, result: transformedPosition };
     }
 
     getDistanceCode(distanceInput: FloatInput): ShaderCode<"float"> {
         const distance = parseFloatInput(distanceInput);
         const transformedDistance = new Variable<"float">();
+
         const body = `
     float ${transformedDistance} = ${distance} * ${this.scaling};`;
+
         return { body, result: transformedDistance };
     }
 }
@@ -91,8 +99,10 @@ export class Round extends CompoundSdf {
     getDistanceCode(distanceInput: FloatInput): ShaderCode<"float"> {
         const distance = parseFloatInput(distanceInput);
         const transformedDistance = new Variable<"float">();
+
         const body = `
     float ${transformedDistance} = ${distance} - ${this.strength};`;
+
         return { body, result: transformedDistance };
     }
 }
