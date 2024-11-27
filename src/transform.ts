@@ -1,11 +1,11 @@
-import { AbstractSdf, CompoundSdf, ShaderCode } from "./sdf";
-import { filterUniforms, FloatInput, inverseMat3, Mat3Input, parseFloatInput, parseMat3Input, parseVec3Input, Value, Variable, Vec3Input } from "./sdfValue";
+import { AbstractField, ShaderCode, FirstMaterialCompoundField } from "./field";
+import { filterUniforms, FloatInput, inverseMat3, Mat3Input, parseFloatInput, parseMat3Input, parseVec3Input, Value, Variable, Vec3Input } from "./value";
 
-export class Translate extends CompoundSdf {
-    declare children: [AbstractSdf];
+export class Translate extends FirstMaterialCompoundField {
+    declare children: [AbstractField];
     translation: Value<"vec3">;
 
-    constructor(translation: Vec3Input, child: AbstractSdf) {
+    constructor(translation: Vec3Input, child: AbstractField) {
         super(child);
         this.translation = parseVec3Input(translation);
     }
@@ -25,11 +25,11 @@ export class Translate extends CompoundSdf {
     }
 }
 
-export class Rotate extends CompoundSdf {
-    declare children: [AbstractSdf];
+export class Rotate extends FirstMaterialCompoundField {
+    declare children: [AbstractField];
     inverseRotation: Value<"mat3">;
 
-    constructor(rotation: Mat3Input, child: AbstractSdf) {
+    constructor(rotation: Mat3Input, child: AbstractField) {
         super(child);
         this.inverseRotation = inverseMat3(parseMat3Input(rotation));
     }
@@ -49,11 +49,11 @@ export class Rotate extends CompoundSdf {
     }
 }
 
-export class Scale extends CompoundSdf {
-    declare children: [AbstractSdf];
+export class Scale extends FirstMaterialCompoundField {
+    declare children: [AbstractField];
     scaling: Value<"float">;
 
-    constructor(scaling: FloatInput, child: AbstractSdf) {
+    constructor(scaling: FloatInput, child: AbstractField) {
         super(child);
         this.scaling = parseFloatInput(scaling);
     }
@@ -83,11 +83,11 @@ export class Scale extends CompoundSdf {
     }
 }
 
-export class Round extends CompoundSdf {
-    declare children: [AbstractSdf];
+export class Round extends FirstMaterialCompoundField {
+    declare children: [AbstractField];
     strength: Value<"float">;
 
-    constructor(strength: FloatInput, child: AbstractSdf) {
+    constructor(strength: FloatInput, child: AbstractField) {
         super(child);
         this.strength = parseFloatInput(strength);
     }

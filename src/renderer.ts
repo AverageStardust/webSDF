@@ -1,6 +1,6 @@
 import * as twgl from "twgl.js";
 import { World } from "./world";
-import { Uniform, ValueTypes } from "./sdfValue";
+import { Uniform, ValueTypes } from "./value";
 
 enum State {
     Stopped,
@@ -12,7 +12,7 @@ export class Renderer extends EventTarget {
     gl: WebGL2RenderingContext;
     canvas: HTMLCanvasElement;
     world: World;
-    sdfUniforms: Uniform<ValueTypes, unknown>[] = [];
+    fieldUniforms: Uniform<ValueTypes, unknown>[] = [];
 
     bufferInfo: twgl.BufferInfo;
     programInfo: twgl.ProgramInfo | null = null;
@@ -37,6 +37,8 @@ export class Renderer extends EventTarget {
             position: [-1, -1, 0, 1, -1, 0, -1, 1, 0, -1, 1, 0, 1, -1, 0, 1, 1, 0], // screen quad
         };
         this.bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
+
+        this.updateWorld();
     }
 
     start() {
@@ -55,8 +57,10 @@ export class Renderer extends EventTarget {
 
     requestFrame() {
         this.frameHandle = requestAnimationFrame(this.frame.bind(this));
-        if (!this.world.sdf.isNew) return;
-        this.setProgram(...this.world.sdf.getProgram());
+    }
+
+    updateWorld() {
+        this.setProgram(...this.world.field.getProgram());
     }
 
     frame(time: number) {
@@ -84,7 +88,7 @@ export class Renderer extends EventTarget {
             cameraRotation: camera.rotation.array
         };
 
-        for (const uniform of this.sdfUniforms) {
+        for (const uniform of this.fieldUniforms) {
             uniforms[uniform.identifier] = uniform.getShaderValue();
         }
 
@@ -115,7 +119,7 @@ export class Renderer extends EventTarget {
 
         this.programInfo = program;
         this.programVersion = version;
-        this.sdfUniforms = uniforms;
+        this.fieldUniforms = uniforms;
 
         if (this.state === State.WaitingForProgram)
             this.start();

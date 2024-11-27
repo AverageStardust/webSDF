@@ -1,12 +1,13 @@
-import { PrimitiveSdf } from "./sdf";
-import { filterUniforms, FloatInput, parseFloatInput, parseVec3Input, Uniform, Value, ValueTypes, Variable, Vec3Input } from "./sdfValue";
+import { PrimitiveField } from "./field";
+import { Material } from "./material";
+import { filterUniforms, FloatInput, parseFloatInput, parseVec3Input, Uniform, Value, ValueTypes, Variable, Vec3Input } from "./value";
 
-export class Empty extends PrimitiveSdf {
+export class Empty extends PrimitiveField {
     constructor() {
-        super();
+        super(Material.zero());
     }
 
-    getUniforms(): Uniform<ValueTypes, unknown>[] {
+    getSelfUniforms(): Uniform<ValueTypes, unknown>[] {
         return [];
     }
 
@@ -14,7 +15,7 @@ export class Empty extends PrimitiveSdf {
         const result = new Variable<"float">();
 
         const body = `
-    float ${result} = 1.0 / 0.0;`;
+    float ${result} = INFINITY;`;
 
         return {
             body,
@@ -23,15 +24,15 @@ export class Empty extends PrimitiveSdf {
     }
 }
 
-export class Sphere extends PrimitiveSdf {
+export class Sphere extends PrimitiveField {
     radius: Value<"float">;
 
-    constructor(radiusInput: FloatInput) {
-        super();
+    constructor(radiusInput: FloatInput, material: Material) {
+        super(material);
         this.radius = parseFloatInput(radiusInput);
     }
 
-    getUniforms(): Uniform<ValueTypes, unknown>[] {
+    getSelfUniforms(): Uniform<ValueTypes, unknown>[] {
         return filterUniforms([this.radius]);
     }
 
@@ -49,15 +50,15 @@ export class Sphere extends PrimitiveSdf {
     }
 }
 
-export class Box extends PrimitiveSdf {
+export class Box extends PrimitiveField {
     size: Value<"vec3">;
 
-    constructor(sizeInput: Vec3Input) {
-        super();
+    constructor(sizeInput: Vec3Input, material: Material) {
+        super(material);
         this.size = parseVec3Input(sizeInput);
     }
 
-    getUniforms(): Uniform<ValueTypes, unknown>[] {
+    getSelfUniforms(): Uniform<ValueTypes, unknown>[] {
         return filterUniforms([this.size]);
     }
 

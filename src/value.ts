@@ -1,7 +1,7 @@
 import { Matrix3 } from "./matrix3";
 import { Vector3 } from "./vector3";
 
-export type ValueTypes = "float" | "vec3" | "mat3";
+export type ValueTypes = "float" | "vec3" | "mat3" | "Material";
 
 export type FloatInput = number | Value<"float">;
 export type Vec3Input = Vector3 | Value<"vec3">;

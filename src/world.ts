@@ -1,8 +1,8 @@
 import { Camera } from "./camera";
-import { AbstractSdf } from "./sdf";
-import { Empty } from "./sdfPrimative";
+import { AbstractField } from "./field";
+import { Empty } from "./primative";
 
 export class World {
     camera = new Camera();
-    sdf: AbstractSdf = new Empty();
+    field: AbstractField = new Empty();
 }
