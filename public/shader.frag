@@ -164,6 +164,6 @@ void main() {
     vec3 direction = normalize(vec3(screenCoord * viewport, -nearRadius));
     direction *= cameraRotation;
 
-    castReflectedRay(cameraPosition, direction);
+    fragColor.rgb = castReflectedRay(cameraPosition, direction);
     fragColor.a = 1.0;
 }
