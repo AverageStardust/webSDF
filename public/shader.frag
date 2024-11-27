@@ -5,8 +5,8 @@
 #define REFLECTION_STEPS 8
 #define REFLECTION_CUTOFF 0.001
 #define LIGHT_POSITION vec3(-2.0, 4.0, -2.0)
-#define LIGHT_RADIUS 0.1
-#define LIGHT_COLOR vec3(50.0, 50.0, 50.0)
+#define LIGHT_RADIUS 0.25
+#define LIGHT_COLOR vec3(30.0, 30.0, 30.0)
 #define AO_RANGE 0.3
 
 precision highp float;
@@ -26,11 +26,6 @@ out vec4 fragColor;
 struct Material {
     vec3 diffuse;
     vec3 specular;
-};
-
-struct LightCast {
-    bool hit;
-    vec3 color;
 };
 
 float lengthSq(vec3 vec) {
@@ -91,14 +86,13 @@ float castOcclusion(vec3 position, vec3 normal) {
     return sampleRadius / sampleDistance * 0.6 + 0.4;
 }
 
-LightCast castLight(vec3 position, vec3 direction, float t) {
-    float dist = distToLine(position, position + t * direction, LIGHT_POSITION);
+vec3 castLight(vec3 position, vec3 direction, float t) {
+    float dist = distToLine(position, t * direction, LIGHT_POSITION);
     if (dist < LIGHT_RADIUS) {
-        float distanceSq = lengthSq(LIGHT_POSITION - position);
-        return LightCast(true, LIGHT_COLOR / distanceSq);
+        return LIGHT_COLOR;
     }
 
-    return LightCast(false, vec3(0.0));
+    return vec3(0.0);
 }
 
 vec3 castDiffuse(vec3 position, vec3 normal, vec3 lightPosition, vec3 lightColor) {
@@ -122,12 +116,13 @@ vec3 skyColor(vec3 direction) {
 
 vec3 castReflectedRay(vec3 position, vec3 direction) {
     float t = castRay(position, direction, nearRadius, farRadius);
-    LightCast lightCast = castLight(position, direction, min(t, farRadius));
+    vec3 direct = castLight(position, direction, min(t, farRadius));
 
-    if(lightCast.hit) return lightCast.color;
+    vec3 color = vec3(0.0);
+    color += direct;
 
     if (t >= farRadius) {
-        return skyColor(direction);
+        return color + skyColor(direction);
     }
 
     position += t * direction;
@@ -137,19 +132,15 @@ vec3 castReflectedRay(vec3 position, vec3 direction) {
     position += normal * EPSILON;
    
     vec3 diffuseLight = castDiffuse(position, normal, LIGHT_POSITION, LIGHT_COLOR);
-    vec3 color = diffuseLight * mat.diffuse;
+    color += diffuseLight * mat.diffuse;
     vec3 specular = mat.specular;
 
     for(int i = 0; i < REFLECTION_STEPS; i++) {
         if (lengthSq(specular) < REFLECTION_CUTOFF) break;
 
         float t = castRay(position, direction, EPSILON, farRadius);
-        LightCast lightCast = castLight(position, direction, t);
-
-        if (lightCast.hit) {
-            color += lightCast.color * specular;
-            break;
-        }
+        vec3 direct = castLight(position, direction, min(t, farRadius));
+        color += direct * specular;
 
         if (t >= farRadius) {
             color += skyColor(direction) * mat.specular;

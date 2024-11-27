@@ -15,8 +15,8 @@ const controller = new Controller({
 
         world.camera.fov = 120;
 
-        const red = new Material(new Vector3(0.7, 0, 0), new Vector3(0.1));
-        const green = new Material(new Vector3(0.05), new Vector3(0.6, 0.7, 0.9));
+        const red = new Material(new Vector3(0.7, 0, 0), new Vector3(0.02));
+        const green = new Material(new Vector3(0.05), new Vector3(0.8, 0.9, 0.8));
 
         world.field =
             new Translate(new Vector3(0, 0, -5),
@@ -43,7 +43,6 @@ const controller = new Controller({
         if (controller.isKeyDown("Space")) movement.y++;
 
         movement.norm(delta * 0.01);
-        console.log(movement);
 
         world.camera.move(movement);
     }

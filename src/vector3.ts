@@ -154,7 +154,9 @@ export class Vector3 {
     }
 
     norm(targetLength: number = 1): Vector3 {
-        const inverseLength = targetLength / this.length;
+        const length = this.length;
+        if (this.length === 0.0) return this;
+        const inverseLength = targetLength / length;
         this.x *= inverseLength;
         this.y *= inverseLength;
         this.z *= inverseLength;
