@@ -32,4 +32,8 @@ export class Camera {
         const halfPI = Math.PI * 0.5;
         this.pitch = Math.max(-halfPI, Math.min(halfPI, this.pitch + deltaPitch));
     }
+
+    move(movement: Vector3) {
+        this.position.add(movement.clone.matrixMult(this.rotation));
+    }
 }

@@ -31,8 +31,21 @@ const controller = new Controller({
         return state;
     },
 
-    frame: (_world, state, time, _delta) => {
+    frame: ({ world, state }, time, delta) => {
         state.rotation.setValue(Matrix3.rotateY(time * 0.001));
+
+        const movement = new Vector3(0.0);
+        if (controller.isKeyDown("KeyW")) movement.z--;
+        if (controller.isKeyDown("KeyS")) movement.z++;
+        if (controller.isKeyDown("KeyA")) movement.x--;
+        if (controller.isKeyDown("KeyD")) movement.x++;
+        if (controller.isKeyDown("ShiftLeft")) movement.y--;
+        if (controller.isKeyDown("Space")) movement.y++;
+
+        movement.norm(delta * 0.01);
+        console.log(movement);
+
+        world.camera.move(movement);
     }
 });
 

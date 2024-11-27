@@ -1,9 +1,10 @@
 import { FrameEvent, Renderer } from "./renderer";
 import { World } from "./world";
 
+
 interface Hooks<T> {
     start: (world: World) => T;
-    frame?: (world: World, state: T, time: number, delta: number) => void;
+    frame?: (context: Controller<T>, time: number, delta: number) => void;
 }
 
 export class Controller<T> {
@@ -11,7 +12,7 @@ export class Controller<T> {
     world: World;
     renderer: Renderer;
     hooks: Hooks<T>;
-    pressedKeys = new Set<String>();
+    keysHeld = new Set<String>();
     state!: T;
 
     constructor(hooks: Hooks<T>) {
@@ -26,38 +27,41 @@ export class Controller<T> {
 
         canvas.addEventListener("click", this.onClick.bind(this));
         canvas.addEventListener("mousemove", this.onMouseMove.bind(this))
-        canvas.addEventListener("keydown", this.onKeyDown.bind(this));
-        canvas.addEventListener("keyup", this.onKeyUp.bind(this));
+        document.addEventListener("keydown", this.onKeyDown.bind(this));
+        document.addEventListener("keyup", this.onKeyUp.bind(this));
 
         this.renderer.addEventListener("frame", this.onFrame.bind(this));
     }
 
     start() {
         this.state = this.hooks.start(this.world);
-        console.log(this.world.field)
         this.renderer.start();
     }
 
-    async onClick() {
+    isKeyDown(code: string) {
+        return this.keysHeld.has(code);
+    }
+
+    private async onClick() {
         await this.canvas.requestPointerLock({ unadjustedMovement: true });
     }
 
-    onMouseMove(event: MouseEvent) {
+    private onMouseMove(event: MouseEvent) {
         if (document.pointerLockElement !== this.canvas) return;
         this.world.camera.look(event.movementX * -0.001, event.movementY * -0.001);
     }
 
-    onKeyDown(event: KeyboardEvent) {
-        this.pressedKeys.add(event.code);
+    private onKeyDown(event: KeyboardEvent) {
+        this.keysHeld.add(event.code);
     }
 
-    onKeyUp(event: KeyboardEvent) {
-        this.pressedKeys.delete(event.code);
+    private onKeyUp(event: KeyboardEvent) {
+        this.keysHeld.delete(event.code);
     }
 
-    onFrame(event: Event) {
+    private onFrame(event: Event) {
         if (!(event instanceof FrameEvent)) return;
         if (this.hooks.frame)
-            this.hooks.frame(this.world, this.state, event.time, event.delta);
+            this.hooks.frame(this, event.time, event.delta);
     }
 }
