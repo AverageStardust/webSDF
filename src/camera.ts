@@ -9,7 +9,7 @@ export class Camera {
     farRadius: number;
     fov: number;
 
-    constructor(fov = 70, nearRadius = 0.1, farRadius = 10000) {
+    constructor(fov = 70, nearRadius = 0.1, farRadius = 500) {
         this.fov = fov;
         this.nearRadius = nearRadius;
         this.farRadius = farRadius;

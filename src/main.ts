@@ -15,7 +15,7 @@ const controller = new Controller({
 
         world.camera.fov = 120;
 
-        const red = new Material(new Vector3(0.7, 0, 0), new Vector3(0.02));
+        const red = new Material(new Vector3(0.7, 0, 0), new Vector3(0.0));
         const green = new Material(new Vector3(0.05), new Vector3(0.8, 0.9, 0.8));
 
         world.field =

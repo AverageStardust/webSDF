@@ -1,9 +1,9 @@
 #version 300 es
 
 #define INFINITY 3.4028234E38
-#define EPSILON 1E-4
-#define REFLECTION_STEPS 8
-#define REFLECTION_CUTOFF 0.001
+#define EPSILON 2E-3
+#define REFLECTION_STEPS 2
+#define REFLECTION_CUTOFF 0.002
 #define LIGHT_POSITION vec3(-2.0, 4.0, -2.0)
 #define LIGHT_RADIUS 0.25
 #define LIGHT_COLOR vec3(30.0, 30.0, 30.0)
@@ -72,7 +72,7 @@ float castRay(vec3 position, vec3 direction, float initalT, float maxT) {
 }
 
 float castOcclusion(vec3 position, vec3 normal) {
-    float t = castRay(position, normal, EPSILON, AO_RANGE * 2.0);
+    float t = castRay(position, normal, EPSILON * 10.0, AO_RANGE * 2.0);
 
     float sampleDistance;
     if (t > AO_RANGE * 2.0) {
@@ -105,9 +105,7 @@ vec3 castDiffuse(vec3 position, vec3 normal, vec3 lightPosition, vec3 lightColor
     }
 
     float intensity = max(dot(direction, normal), 0.0) / distanceSq;
-    float occlusion = castOcclusion(position, normal);
-
-    return lightColor * intensity * occlusion;
+    return lightColor * intensity;
 }
 
 vec3 skyColor(vec3 direction) {
@@ -132,7 +130,8 @@ vec3 castReflectedRay(vec3 position, vec3 direction) {
     position += normal * EPSILON;
    
     vec3 diffuseLight = castDiffuse(position, normal, LIGHT_POSITION, LIGHT_COLOR);
-    color += diffuseLight * mat.diffuse;
+    float occlusion = castOcclusion(position, normal);
+    color += diffuseLight * mat.diffuse * occlusion;
     vec3 specular = mat.specular;
 
     for(int i = 0; i < REFLECTION_STEPS; i++) {
@@ -165,5 +164,6 @@ void main() {
     vec3 direction = normalize(vec3(screenCoord * viewport, -nearRadius));
     direction *= cameraRotation;
 
-    fragColor = vec4(castReflectedRay(cameraPosition, direction), 1.0);
+    castReflectedRay(cameraPosition, direction);
+    fragColor.a = 1.0;
 }
