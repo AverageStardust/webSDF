@@ -37,12 +37,11 @@ export class Renderer extends EventTarget {
             position: [-1, -1, 0, 1, -1, 0, -1, 1, 0, -1, 1, 0, 1, -1, 0, 1, 1, 0], // screen quad
         };
         this.bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
-
-        this.updateWorld();
     }
 
     start() {
         if (this.state === State.Running) return;
+        this.updateWorld();
         this.state = State.Running;
         this.requestFrame();
     }
