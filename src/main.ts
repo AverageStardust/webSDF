@@ -16,12 +16,13 @@ const world = new World();
 world.camera.fov = 120;
 
 const rotation = new Mat3Uniform(Matrix3.identity());
-const red = new Material(new Vector3(1, 0, 0), new Vector3(0, 0, 0));
-const green = new Material(new Vector3(0, 1, 0), new Vector3(0, 0, 0));
+const red = new Material(new Vector3(0.7, 0, 0), new Vector3(0.1));
+const green = new Material(new Vector3(0.05), new Vector3(0.6, 0.7, 0.9));
+
 world.field =
     new Translate(new Vector3(0, 0, -5),
         new Rotate(rotation,
-            new SmoothUnion(0.3,
+            new SmoothUnion(0.1,
                 new Translate(new Vector3(-0.45, 0, 0),
                     new Box(new Vector3(0.4, 1.2, 0.4), red)),
                 new Translate(new Vector3(0.45, 0, 0),

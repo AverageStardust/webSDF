@@ -9,6 +9,10 @@ export class Vector3 {
         return new Vector3(0, 0, 0);
     }
 
+    static one() {
+        return new Vector3(1, 1, 1);
+    }
+
     static up() {
         return new Vector3(0, 1, 0);
     }
@@ -43,7 +47,7 @@ export class Vector3 {
 
     // TODO: static fromAngles(theta: number, phi: number, length: number): Vector3
 
-    constructor(x: number, y: number, z: number) {
+    constructor(x: number, y: number = x, z: number = y) {
         this.x = x;
         this.y = y;
         this.z = z;
