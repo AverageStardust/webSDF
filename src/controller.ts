@@ -1,11 +1,12 @@
 import { FrameEvent, Renderer } from "./renderer";
 import { World } from "./world";
 
-
 interface Hooks<T> {
     start: (world: World) => T;
     frame?: (context: Controller<T>, time: number, delta: number) => void;
 }
+
+const FPS_POLL_RATE = 1000;
 
 export class Controller<T> {
     canvas: HTMLCanvasElement;
@@ -14,6 +15,11 @@ export class Controller<T> {
     hooks: Hooks<T>;
     keysHeld = new Set<String>();
     state!: T;
+
+    fpsStartTime = 0.0;
+    fpsFrameCount = 0;
+    minDelta = Infinity;
+    maxDelta = 0;
 
     constructor(hooks: Hooks<T>) {
         const canvas = document.getElementById("canvas");
@@ -61,6 +67,27 @@ export class Controller<T> {
 
     private onFrame(event: Event) {
         if (!(event instanceof FrameEvent)) return;
+
+        this.fpsFrameCount++;
+        this.minDelta = Math.min(this.minDelta, event.delta);
+        this.maxDelta = Math.max(this.maxDelta, event.delta);
+        if (event.time > this.fpsStartTime + FPS_POLL_RATE) {
+            if (this.fpsStartTime > 0) {
+                const fpsNums = [
+                    1000 / this.minDelta,
+                    this.fpsFrameCount / (event.time - this.fpsStartTime) * 1000,
+                    1000 / this.maxDelta];
+                const fpsStrs = fpsNums.map((num) => String(Math.round(num * 10) / 10).padEnd(5, " "))
+                console.clear();
+                console.info(`FPS: High ${fpsStrs[0]} Average ${fpsStrs[1]} Low ${fpsStrs[2]}`);
+            }
+            this.fpsFrameCount = 0;
+            this.fpsStartTime = event.time;
+            this.minDelta = Infinity;
+            this.maxDelta = 0;
+        }
+
+
         if (this.hooks.frame)
             this.hooks.frame(this, event.time, event.delta);
     }
