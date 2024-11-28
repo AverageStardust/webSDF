@@ -106,3 +106,116 @@ export class Round extends FirstMaterialCompoundField {
         return { body, result: transformedDistance };
     }
 }
+
+export class RepetitionSymetric extends FirstMaterialCompoundField {
+    declare children: [AbstractField];
+    size: Value<"vec3">;
+
+    constructor(size: Vec3Input, child: AbstractField) {
+        super(child);
+        this.size = parseVec3Input(size);
+    }
+
+    getSelfUniforms() {
+        return filterUniforms([this.size]);
+    }
+
+    getPositionCode(positionInput: Vec3Input): ShaderCode<"vec3"> {
+        const position = parseVec3Input(positionInput);
+        const transformedPosition = new Variable<"vec3">();
+
+        const body = `
+    vec3 ${transformedPosition} = ${position} - ${this.size} * round(${position} / ${this.size});`
+
+        return { body, result: transformedPosition };
+    }
+}
+
+export class LimitedRepetitionSymetric extends FirstMaterialCompoundField {
+    declare children: [AbstractField];
+    size: Value<"vec3">;
+    limit: Value<"vec3">;
+
+    constructor(size: Vec3Input, limit: Vec3Input, child: AbstractField) {
+        super(child);
+        this.size = parseVec3Input(size);
+        this.limit = parseVec3Input(limit);
+    }
+
+    getSelfUniforms() {
+        return filterUniforms([this.size, this.limit]);
+    }
+
+    getPositionCode(positionInput: Vec3Input): ShaderCode<"vec3"> {
+        const position = parseVec3Input(positionInput);
+        const transformedPosition = new Variable<"vec3">();
+
+        const body = `
+    vec3 ${transformedPosition} = ${position} - ${this.size} * clamp(round(${position} / ${this.size}), -${this.limit}, ${this.limit});`
+
+        return { body, result: transformedPosition };
+    }
+}
+
+
+export class RepetitionMirrored extends FirstMaterialCompoundField {
+    declare children: [AbstractField];
+    size: Value<"vec3">;
+
+    constructor(size: Vec3Input, child: AbstractField) {
+        super(child);
+        this.size = parseVec3Input(size);
+    }
+
+    getSelfUniforms() {
+        return filterUniforms([this.size]);
+    }
+
+    getPositionCode(positionInput: Vec3Input): ShaderCode<"vec3"> {
+        const position = parseVec3Input(positionInput);
+        const i = new Variable<"vec3">();
+        const r = new Variable<"vec3">();
+        const transformedPosition = new Variable<"vec3">();
+
+        const body = `
+    vec3 ${i} = round(${position} / ${this.size});
+    vec3 ${r} = ${position} - ${this.size} * ${i};
+    vec3 ${transformedPosition} = vec3(((int(${i}.x) & 1) == 0) ? ${r}.x : -${r}.x,
+                                       ((int(${i}.y) & 1) == 0) ? ${r}.y : -${r}.y,
+                                       ((int(${i}.z) & 1) == 0) ? ${r}.z : -${r}.z);`
+
+        return { body, result: transformedPosition };
+    }
+}
+
+export class LimitedRepetitionMirrored extends FirstMaterialCompoundField {
+    declare children: [AbstractField];
+    size: Value<"vec3">;
+    limit: Value<"vec3">;
+
+    constructor(size: Vec3Input, limit: Vec3Input, child: AbstractField) {
+        super(child);
+        this.size = parseVec3Input(size);
+        this.limit = parseVec3Input(limit);
+    }
+
+    getSelfUniforms() {
+        return filterUniforms([this.size, this.limit]);
+    }
+
+    getPositionCode(positionInput: Vec3Input): ShaderCode<"vec3"> {
+        const position = parseVec3Input(positionInput);
+        const i = new Variable<"vec3">();
+        const r = new Variable<"vec3">();
+        const transformedPosition = new Variable<"vec3">();
+
+        const body = `
+    vec3 ${i} = clamp(round(${position} / ${this.size}), -${this.limit}, ${this.limit});
+    vec3 ${r} = ${position} - ${this.size} * ${i};
+    vec3 ${transformedPosition} = vec3(((int(${i}.x) & 1) == 0) ? ${r}.x : -${r}.x,
+                                       ((int(${i}.y) & 1) == 0) ? ${r}.y : -${r}.y,
+                                       ((int(${i}.z) & 1) == 0) ? ${r}.z : -${r}.z);`
+
+        return { body, result: transformedPosition };
+    }
+}
