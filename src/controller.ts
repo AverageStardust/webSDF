@@ -1,4 +1,5 @@
 import { FrameEvent, Renderer } from "./renderer";
+import { Vector3 } from "./vector3";
 import { World } from "./world";
 
 interface Hooks<T> {
@@ -7,6 +8,8 @@ interface Hooks<T> {
 }
 
 const FPS_POLL_RATE = 1000;
+const LOOK_INPUT = false;
+const MOVE_INPUT = false;
 
 export class Controller<T> {
     canvas: HTMLCanvasElement;
@@ -49,12 +52,16 @@ export class Controller<T> {
     }
 
     private async onClick() {
-        await this.canvas.requestPointerLock({ unadjustedMovement: true });
+        if (LOOK_INPUT) {
+            await this.canvas.requestPointerLock({ unadjustedMovement: true });
+        }
     }
 
     private onMouseMove(event: MouseEvent) {
         if (document.pointerLockElement !== this.canvas) return;
-        this.world.camera.look(event.movementX * -0.001, event.movementY * -0.001);
+        if (LOOK_INPUT) {
+            this.world.camera.look(event.movementX * -0.001, event.movementY * -0.001);
+        }
     }
 
     private onKeyDown(event: KeyboardEvent) {
@@ -87,6 +94,18 @@ export class Controller<T> {
             this.maxDelta = 0;
         }
 
+        if (MOVE_INPUT) {
+            const movement = new Vector3(0.0);
+
+            if (this.isKeyDown("KeyW")) movement.z--;
+            if (this.isKeyDown("KeyS")) movement.z++;
+            if (this.isKeyDown("KeyA")) movement.x--;
+            if (this.isKeyDown("KeyD")) movement.x++;
+            if (this.isKeyDown("ShiftLeft")) movement.y--;
+            if (this.isKeyDown("Space")) movement.y++;
+
+            this.world.camera.move(movement.norm(event.delta * 0.01));
+        }
 
         if (this.hooks.frame)
             this.hooks.frame(this, event.time, event.delta);
