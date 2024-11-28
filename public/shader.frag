@@ -4,9 +4,9 @@
 #define EPSILON 2E-3
 #define REFLECTION_STEPS 2
 #define REFLECTION_CUTOFF 0.002
-#define LIGHT_POSITION vec3(-2.0, 4.0, -2.0)
-#define LIGHT_RADIUS 0.25
-#define LIGHT_COLOR vec3(30.0, 30.0, 30.0)
+#define LIGHT_POSITION vec3(-2.0, 4.0, 3.0)
+#define LIGHT_RADIUS 0.15
+#define LIGHT_COLOR vec3(30.0, 25.0, 25.0)
 #define AO_RANGE 0.3
 
 precision highp float;
