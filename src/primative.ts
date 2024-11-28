@@ -77,3 +77,93 @@ export class Box extends PrimitiveField {
         }
     }
 }
+
+export class Torus extends PrimitiveField {
+    major: Value<"float">;
+    minor: Value<"float">;
+
+    constructor(major: FloatInput, minor: FloatInput, material: Material) {
+        super(material);
+        this.major = parseFloatInput(major);
+        this.minor = parseFloatInput(minor);
+    }
+
+    getSelfUniforms(): Uniform<ValueTypes, unknown>[] {
+        return filterUniforms([this.major, this.minor]);
+    }
+
+    getPrimitiveCode(positionInput: Vec3Input) {
+        const position = parseVec3Input(positionInput);
+        const q = new Variable<"vec3">();
+        const result = new Variable<"float">();
+
+        const body = `
+    vec2 ${q} = vec2(length(${position}.xz) - ${this.major}, ${position}.y);
+    float ${result} = length(${q}) - ${this.minor};`
+
+        return {
+            body,
+            result
+        }
+    }
+}
+
+export class Capsule extends PrimitiveField {
+    height: Value<"float">;
+    radius: Value<"float">;
+
+    constructor(height: FloatInput, radius: FloatInput, material: Material) {
+        super(material);
+        this.height = parseFloatInput(height);
+        this.radius = parseFloatInput(radius);
+    }
+
+    getSelfUniforms(): Uniform<ValueTypes, unknown>[] {
+        return filterUniforms([this.height, this.radius]);
+    }
+
+    getPrimitiveCode(positionInput: Vec3Input) {
+        const position = parseVec3Input(positionInput);
+        const y = new Variable<"float">();
+        const result = new Variable<"float">();
+
+        const body = `
+    float ${y} = clamp(${position}.y, 0.0, ${this.height});
+    float ${result} = length(${position} - vec3(0.0, ${y}, 0.0)) - ${this.radius};`
+
+        return {
+            body,
+            result
+        }
+    }
+}
+
+export class Cylinder extends PrimitiveField {
+    height: Value<"float">;
+    radius: Value<"float">;
+
+    constructor(height: FloatInput, radius: FloatInput, material: Material) {
+        super(material);
+        this.height = parseFloatInput(height);
+        this.radius = parseFloatInput(radius);
+    }
+
+    getSelfUniforms(): Uniform<ValueTypes, unknown>[] {
+        return filterUniforms([this.height, this.radius]);
+    }
+
+    getPrimitiveCode(positionInput: Vec3Input) {
+        const position = parseVec3Input(positionInput);
+        const d = new Variable<"vec3">();
+        const result = new Variable<"float">();
+
+        const body = `
+    vec2 ${d} = abs(vec2(length(${position}.xz), ${position}.y)) - vec2(${this.radius}, ${this.height});
+    float ${result} = min(max(${d}.x, ${d}.y), 0.0) + length(max(${d}, 0.0)); `
+
+        return {
+            body,
+            result
+        }
+    }
+}
