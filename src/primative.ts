@@ -12,7 +12,7 @@ export class Empty extends PrimitiveField {
     }
 
     getPrimitiveCode(_positionInput: Vec3Input) {
-        const result = new Variable<"float">();
+        const result = new Variable<ValueTypes.Float>();
 
         const body = `
     float ${result} = INFINITY;`;
@@ -25,7 +25,7 @@ export class Empty extends PrimitiveField {
 }
 
 export class Sphere extends PrimitiveField {
-    radius: Value<"float">;
+    radius: Value<ValueTypes.Float>;
 
     constructor(radiusInput: FloatInput, material: Material) {
         super(material);
@@ -38,7 +38,7 @@ export class Sphere extends PrimitiveField {
 
     getPrimitiveCode(positionInput: Vec3Input) {
         const position = parseVec3Input(positionInput);
-        const result = new Variable<"float">();
+        const result = new Variable<ValueTypes.Float>();
 
         const body = `
     float ${result} = length(${position}) - ${this.radius};`;
@@ -51,7 +51,7 @@ export class Sphere extends PrimitiveField {
 }
 
 export class Box extends PrimitiveField {
-    size: Value<"vec3">;
+    size: Value<ValueTypes.Vec3>;
 
     constructor(sizeInput: Vec3Input, material: Material) {
         super(material);
@@ -64,8 +64,8 @@ export class Box extends PrimitiveField {
 
     getPrimitiveCode(positionInput: Vec3Input) {
         const position = parseVec3Input(positionInput);
-        const q = new Variable<"vec3">();
-        const result = new Variable<"float">();
+        const q = new Variable<ValueTypes.Vec3>();
+        const result = new Variable<ValueTypes.Float>();
 
         const body = `
     vec3 ${q} = abs(${position}) - ${this.size};
@@ -79,8 +79,8 @@ export class Box extends PrimitiveField {
 }
 
 export class Torus extends PrimitiveField {
-    major: Value<"float">;
-    minor: Value<"float">;
+    major: Value<ValueTypes.Float>;
+    minor: Value<ValueTypes.Float>;
 
     constructor(major: FloatInput, minor: FloatInput, material: Material) {
         super(material);
@@ -94,8 +94,8 @@ export class Torus extends PrimitiveField {
 
     getPrimitiveCode(positionInput: Vec3Input) {
         const position = parseVec3Input(positionInput);
-        const q = new Variable<"vec3">();
-        const result = new Variable<"float">();
+        const q = new Variable<ValueTypes.Vec3>();
+        const result = new Variable<ValueTypes.Float>();
 
         const body = `
     vec2 ${q} = vec2(length(${position}.xz) - ${this.major}, ${position}.y);
@@ -109,8 +109,8 @@ export class Torus extends PrimitiveField {
 }
 
 export class Capsule extends PrimitiveField {
-    height: Value<"float">;
-    radius: Value<"float">;
+    height: Value<ValueTypes.Float>;
+    radius: Value<ValueTypes.Float>;
 
     constructor(height: FloatInput, radius: FloatInput, material: Material) {
         super(material);
@@ -124,8 +124,8 @@ export class Capsule extends PrimitiveField {
 
     getPrimitiveCode(positionInput: Vec3Input) {
         const position = parseVec3Input(positionInput);
-        const y = new Variable<"float">();
-        const result = new Variable<"float">();
+        const y = new Variable<ValueTypes.Float>();
+        const result = new Variable<ValueTypes.Float>();
 
         const body = `
     float ${y} = clamp(${position}.y, 0.0, ${this.height});
@@ -139,8 +139,8 @@ export class Capsule extends PrimitiveField {
 }
 
 export class Cylinder extends PrimitiveField {
-    height: Value<"float">;
-    radius: Value<"float">;
+    height: Value<ValueTypes.Float>;
+    radius: Value<ValueTypes.Float>;
 
     constructor(height: FloatInput, radius: FloatInput, material: Material) {
         super(material);
@@ -154,8 +154,8 @@ export class Cylinder extends PrimitiveField {
 
     getPrimitiveCode(positionInput: Vec3Input) {
         const position = parseVec3Input(positionInput);
-        const d = new Variable<"vec3">();
-        const result = new Variable<"float">();
+        const d = new Variable<ValueTypes.Vec3>();
+        const result = new Variable<ValueTypes.Float>();
 
         const body = `
     vec2 ${d} = abs(vec2(length(${position}.xz), ${position}.y)) - vec2(${this.radius}, ${this.height});

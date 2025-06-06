@@ -3,12 +3,12 @@ import { Vector3 } from "./vector3";
 
 export interface MaterialShaderCode {
     body: string;
-    result: Value<"Material">;
+    result: Value<ValueTypes.Material>;
 }
 
 export class Material {
-    diffuse: Value<"vec3">;
-    specular: Value<"vec3">;
+    diffuse: Value<ValueTypes.Vec3>;
+    specular: Value<ValueTypes.Vec3>;
 
     static zero() {
         return new Material(Vector3.zero(), Vector3.zero());
@@ -20,7 +20,7 @@ export class Material {
     }
 
     getCode(): MaterialShaderCode {
-        const material = new Variable<"Material">();
+        const material = new Variable<ValueTypes.Material>();
 
         return {
             body: `
@@ -37,7 +37,7 @@ export class Material {
 export function mixMaterial(materialA: MaterialShaderCode, materialB: MaterialShaderCode, ratioInput: FloatInput): MaterialShaderCode {
     const ratio = parseFloatInput(ratioInput);
 
-    const result = new Variable<"Material">;
+    const result = new Variable<ValueTypes.Material>;
 
     const {
         body: materialABody,

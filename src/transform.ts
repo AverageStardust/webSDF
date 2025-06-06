@@ -1,9 +1,9 @@
 import { AbstractField, ShaderCode, FirstMaterialCompoundField } from "./field";
-import { filterUniforms, FloatInput, inverseMat3, Mat3Input, parseFloatInput, parseMat3Input, parseVec3Input, Value, Variable, Vec3Input } from "./value";
+import { filterUniforms, FloatInput, inverseMat3, Mat3Input, parseFloatInput, parseMat3Input, parseVec3Input, Value, ValueTypes, Variable, Vec3Input } from "./value";
 
 export class Translate extends FirstMaterialCompoundField {
     declare children: [AbstractField];
-    translation: Value<"vec3">;
+    translation: Value<ValueTypes.Vec3>;
 
     constructor(translation: Vec3Input, child: AbstractField) {
         super(child);
@@ -14,9 +14,9 @@ export class Translate extends FirstMaterialCompoundField {
         return filterUniforms([this.translation]);
     }
 
-    getPositionCode(positionInput: Vec3Input): ShaderCode<"vec3"> {
+    getPositionCode(positionInput: Vec3Input): ShaderCode<ValueTypes.Vec3> {
         const position = parseVec3Input(positionInput);
-        const transformedPosition = new Variable<"vec3">();
+        const transformedPosition = new Variable<ValueTypes.Vec3>();
 
         const body = `
     vec3 ${transformedPosition} = ${position} - ${this.translation};`;
@@ -27,7 +27,7 @@ export class Translate extends FirstMaterialCompoundField {
 
 export class Rotate extends FirstMaterialCompoundField {
     declare children: [AbstractField];
-    inverseRotation: Value<"mat3">;
+    inverseRotation: Value<ValueTypes.Mat3>;
 
     constructor(rotation: Mat3Input, child: AbstractField) {
         super(child);
@@ -38,9 +38,9 @@ export class Rotate extends FirstMaterialCompoundField {
         return filterUniforms([this.inverseRotation]);
     }
 
-    getPositionCode(positionInput: Vec3Input): ShaderCode<"vec3"> {
+    getPositionCode(positionInput: Vec3Input): ShaderCode<ValueTypes.Vec3> {
         const position = parseVec3Input(positionInput);
-        const transformedPosition = new Variable<"vec3">();
+        const transformedPosition = new Variable<ValueTypes.Vec3>();
 
         const body = `
     vec3 ${transformedPosition} = ${this.inverseRotation} * ${position};`;
@@ -51,7 +51,7 @@ export class Rotate extends FirstMaterialCompoundField {
 
 export class Scale extends FirstMaterialCompoundField {
     declare children: [AbstractField];
-    scaling: Value<"float">;
+    scaling: Value<ValueTypes.Float>;
 
     constructor(scaling: FloatInput, child: AbstractField) {
         super(child);
@@ -62,9 +62,9 @@ export class Scale extends FirstMaterialCompoundField {
         return filterUniforms([this.scaling]);
     }
 
-    getPositionCode(positionInput: Vec3Input): ShaderCode<"vec3"> {
+    getPositionCode(positionInput: Vec3Input): ShaderCode<ValueTypes.Vec3> {
         const position = parseVec3Input(positionInput);
-        const transformedPosition = new Variable<"vec3">();
+        const transformedPosition = new Variable<ValueTypes.Vec3>();
 
         const body = `
     vec3 ${transformedPosition} = ${position} / ${this.scaling};`;
@@ -72,9 +72,9 @@ export class Scale extends FirstMaterialCompoundField {
         return { body, result: transformedPosition };
     }
 
-    getDistanceCode(distanceInput: FloatInput): ShaderCode<"float"> {
+    getDistanceCode(distanceInput: FloatInput): ShaderCode<ValueTypes.Float> {
         const distance = parseFloatInput(distanceInput);
-        const transformedDistance = new Variable<"float">();
+        const transformedDistance = new Variable<ValueTypes.Float>();
 
         const body = `
     float ${transformedDistance} = ${distance} * ${this.scaling};`;
@@ -85,7 +85,7 @@ export class Scale extends FirstMaterialCompoundField {
 
 export class Round extends FirstMaterialCompoundField {
     declare children: [AbstractField];
-    strength: Value<"float">;
+    strength: Value<ValueTypes.Float>;
 
     constructor(strength: FloatInput, child: AbstractField) {
         super(child);
@@ -96,9 +96,9 @@ export class Round extends FirstMaterialCompoundField {
         return filterUniforms([this.strength]);
     }
 
-    getDistanceCode(distanceInput: FloatInput): ShaderCode<"float"> {
+    getDistanceCode(distanceInput: FloatInput): ShaderCode<ValueTypes.Float> {
         const distance = parseFloatInput(distanceInput);
-        const transformedDistance = new Variable<"float">();
+        const transformedDistance = new Variable<ValueTypes.Float>();
 
         const body = `
     float ${transformedDistance} = ${distance} - ${this.strength};`;
@@ -109,7 +109,7 @@ export class Round extends FirstMaterialCompoundField {
 
 export class RepetitionSymetric extends FirstMaterialCompoundField {
     declare children: [AbstractField];
-    size: Value<"vec3">;
+    size: Value<ValueTypes.Vec3>;
 
     constructor(size: Vec3Input, child: AbstractField) {
         super(child);
@@ -120,9 +120,9 @@ export class RepetitionSymetric extends FirstMaterialCompoundField {
         return filterUniforms([this.size]);
     }
 
-    getPositionCode(positionInput: Vec3Input): ShaderCode<"vec3"> {
+    getPositionCode(positionInput: Vec3Input): ShaderCode<ValueTypes.Vec3> {
         const position = parseVec3Input(positionInput);
-        const transformedPosition = new Variable<"vec3">();
+        const transformedPosition = new Variable<ValueTypes.Vec3>();
 
         const body = `
     vec3 ${transformedPosition} = ${position} - ${this.size} * round(${position} / ${this.size});`
@@ -133,8 +133,8 @@ export class RepetitionSymetric extends FirstMaterialCompoundField {
 
 export class LimitedRepetitionSymetric extends FirstMaterialCompoundField {
     declare children: [AbstractField];
-    size: Value<"vec3">;
-    limit: Value<"vec3">;
+    size: Value<ValueTypes.Vec3>;
+    limit: Value<ValueTypes.Vec3>;
 
     constructor(size: Vec3Input, limit: Vec3Input, child: AbstractField) {
         super(child);
@@ -146,9 +146,9 @@ export class LimitedRepetitionSymetric extends FirstMaterialCompoundField {
         return filterUniforms([this.size, this.limit]);
     }
 
-    getPositionCode(positionInput: Vec3Input): ShaderCode<"vec3"> {
+    getPositionCode(positionInput: Vec3Input): ShaderCode<ValueTypes.Vec3> {
         const position = parseVec3Input(positionInput);
-        const transformedPosition = new Variable<"vec3">();
+        const transformedPosition = new Variable<ValueTypes.Vec3>();
 
         const body = `
     vec3 ${transformedPosition} = ${position} - ${this.size} * clamp(round(${position} / ${this.size}), -${this.limit}, ${this.limit});`
@@ -160,7 +160,7 @@ export class LimitedRepetitionSymetric extends FirstMaterialCompoundField {
 
 export class RepetitionMirrored extends FirstMaterialCompoundField {
     declare children: [AbstractField];
-    size: Value<"vec3">;
+    size: Value<ValueTypes.Vec3>;
 
     constructor(size: Vec3Input, child: AbstractField) {
         super(child);
@@ -171,11 +171,11 @@ export class RepetitionMirrored extends FirstMaterialCompoundField {
         return filterUniforms([this.size]);
     }
 
-    getPositionCode(positionInput: Vec3Input): ShaderCode<"vec3"> {
+    getPositionCode(positionInput: Vec3Input): ShaderCode<ValueTypes.Vec3> {
         const position = parseVec3Input(positionInput);
-        const i = new Variable<"vec3">();
-        const r = new Variable<"vec3">();
-        const transformedPosition = new Variable<"vec3">();
+        const i = new Variable<ValueTypes.Vec3>();
+        const r = new Variable<ValueTypes.Vec3>();
+        const transformedPosition = new Variable<ValueTypes.Vec3>();
 
         const body = `
     vec3 ${i} = round(${position} / ${this.size});
@@ -190,8 +190,8 @@ export class RepetitionMirrored extends FirstMaterialCompoundField {
 
 export class LimitedRepetitionMirrored extends FirstMaterialCompoundField {
     declare children: [AbstractField];
-    size: Value<"vec3">;
-    limit: Value<"vec3">;
+    size: Value<ValueTypes.Vec3>;
+    limit: Value<ValueTypes.Vec3>;
 
     constructor(size: Vec3Input, limit: Vec3Input, child: AbstractField) {
         super(child);
@@ -203,11 +203,11 @@ export class LimitedRepetitionMirrored extends FirstMaterialCompoundField {
         return filterUniforms([this.size, this.limit]);
     }
 
-    getPositionCode(positionInput: Vec3Input): ShaderCode<"vec3"> {
+    getPositionCode(positionInput: Vec3Input): ShaderCode<ValueTypes.Vec3> {
         const position = parseVec3Input(positionInput);
-        const i = new Variable<"vec3">();
-        const r = new Variable<"vec3">();
-        const transformedPosition = new Variable<"vec3">();
+        const i = new Variable<ValueTypes.Vec3>();
+        const r = new Variable<ValueTypes.Vec3>();
+        const transformedPosition = new Variable<ValueTypes.Vec3>();
 
         const body = `
     vec3 ${i} = clamp(round(${position} / ${this.size}), -${this.limit}, ${this.limit});

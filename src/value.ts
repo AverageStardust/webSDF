@@ -1,11 +1,16 @@
 import { Matrix3 } from "./matrix3";
 import { Vector3 } from "./vector3";
 
-export type ValueTypes = "float" | "vec3" | "mat3" | "Material";
+export enum ValueTypes {
+    Float,
+    Vec3,
+    Mat3,
+    Material,
+}
 
-export type FloatInput = number | Value<"float">;
-export type Vec3Input = Vector3 | Value<"vec3">;
-export type Mat3Input = Matrix3 | Value<"mat3">;
+export type FloatInput = number | Value<ValueTypes.Float>;
+export type Vec3Input = Vector3 | Value<ValueTypes.Vec3>;
+export type Mat3Input = Matrix3 | Value<ValueTypes.Mat3>;
 
 const identifierGroups = {
     uni: new Set<number>(),
@@ -35,37 +40,37 @@ export function filterUniforms(values: Value<ValueTypes>[]): Uniform<ValueTypes,
     return values.filter((val) => val instanceof Uniform);
 }
 
-export function parseFloatInput(input: FloatInput): Value<"float"> {
+export function parseFloatInput(input: FloatInput): Value<ValueTypes.Float> {
     if (typeof input === "number") {
-        return new Expression<"float">(toFloat(input));
+        return new Expression<ValueTypes.Float>(toFloat(input));
     } else {
         return input;
     }
 }
 
-export function parseVec3Input(input: Vec3Input): Value<"vec3"> {
+export function parseVec3Input(input: Vec3Input): Value<ValueTypes.Vec3> {
     if (input instanceof Vector3) {
         const contents = input.array.map(toFloat).join(", ");
-        return new Expression<"vec3">(`vec3(${contents})`);
+        return new Expression<ValueTypes.Vec3>(`vec3(${contents})`);
     } else {
         return input;
     }
 }
 
-export function parseMat3Input(input: Mat3Input): Value<"mat3"> {
+export function parseMat3Input(input: Mat3Input): Value<ValueTypes.Mat3> {
     if (input instanceof Matrix3) {
         const contents = input.transposeArray.map(toFloat).join(", ");
-        return new Expression<"mat3">(`mat3(${contents})`);
+        return new Expression<ValueTypes.Mat3>(`mat3(${contents})`);
     } else {
         return input;
     }
 }
 
-export function inverseMat3(input: Value<"mat3">): Value<"mat3"> {
+export function inverseMat3(input: Value<ValueTypes.Mat3>): Value<ValueTypes.Mat3> {
     if (input instanceof Mat3Uniform || input instanceof InverseMat3Uniform) {
         return input.getInverse();
     } else if (input instanceof Expression || input instanceof Variable) {
-        return new Expression<"mat3">(`inverse(${input})`);
+        return new Expression<ValueTypes.Mat3>(`inverse(${input})`);
     } else {
         throw Error("Failed to compile inverse of mat3");
     }
@@ -126,7 +131,7 @@ export abstract class Uniform<T extends ValueTypes, U> extends Identifier<T> {
     abstract getDeclaration(): unknown;
 }
 
-export class FloatUniform extends Uniform<"float", number> {
+export class FloatUniform extends Uniform<ValueTypes.Float, number> {
     getValue() {
         return this.value;
     }
@@ -140,7 +145,7 @@ export class FloatUniform extends Uniform<"float", number> {
     }
 }
 
-export class Vec3Uniform extends Uniform<"vec3", Vector3> {
+export class Vec3Uniform extends Uniform<ValueTypes.Vec3, Vector3> {
     getValue() {
         return this.value.clone;
     }
@@ -154,7 +159,7 @@ export class Vec3Uniform extends Uniform<"vec3", Vector3> {
     }
 }
 
-export class Mat3Uniform extends Uniform<"mat3", Matrix3> {
+export class Mat3Uniform extends Uniform<ValueTypes.Mat3, Matrix3> {
     getValue() {
         return this.value.clone;
     }
@@ -172,7 +177,7 @@ export class Mat3Uniform extends Uniform<"mat3", Matrix3> {
     }
 }
 
-class InverseMat3Uniform extends Uniform<"mat3", Mat3Uniform> {
+class InverseMat3Uniform extends Uniform<ValueTypes.Mat3, Mat3Uniform> {
     getValue() {
         const inverse = this.value.getValue().clone.inverse();
         if (!inverse)

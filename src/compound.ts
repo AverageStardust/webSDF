@@ -11,9 +11,9 @@ export class Union extends CompoundField {
         return [];
     }
 
-    getDistanceCode(...distanceInputs: FloatInput[]): ShaderCode<"float"> {
+    getDistanceCode(...distanceInputs: FloatInput[]): ShaderCode<ValueTypes.Float> {
         const distances = distanceInputs.map(parseFloatInput);
-        const transformedDistance = new Variable<"float">();
+        const transformedDistance = new Variable<ValueTypes.Float>();
         const distancesString = distances.map(String).join(", ");
 
         const body = `
@@ -24,8 +24,8 @@ export class Union extends CompoundField {
 
     getSelfMaterialCode(positionInput: Vec3Input, ...distanceInputs: FloatInput[]): MaterialShaderCode {
         const distances = distanceInputs.map(parseFloatInput);
-        const minDistance = new Variable<"float">();
-        const result = new Variable<"Material">;
+        const minDistance = new Variable<ValueTypes.Float>();
+        const result = new Variable<ValueTypes.Material>;
 
         const distancesString = distances.map(String).join(", ");
         let body = `
@@ -62,9 +62,9 @@ export class Intersection extends FirstMaterialCompoundField {
         return [];
     }
 
-    getDistanceCode(...distanceInputs: FloatInput[]): ShaderCode<"float"> {
+    getDistanceCode(...distanceInputs: FloatInput[]): ShaderCode<ValueTypes.Float> {
         const distances = distanceInputs.map(parseFloatInput);
-        const transformedDistance = new Variable<"float">();
+        const transformedDistance = new Variable<ValueTypes.Float>();
         const distancesString = distances.map(String).join(", ");
 
         const body = `
@@ -85,9 +85,9 @@ export class Subtraction extends FirstMaterialCompoundField {
         return [];
     }
 
-    getDistanceCode(...distanceInputs: [FloatInput, FloatInput]): ShaderCode<"float"> {
+    getDistanceCode(...distanceInputs: [FloatInput, FloatInput]): ShaderCode<ValueTypes.Float> {
         const [minuendDistance, subtrahendDistance] = distanceInputs.map(parseFloatInput);
-        const transformedDistance = new Variable<"float">();
+        const transformedDistance = new Variable<ValueTypes.Float>();
 
         const body = `
     float ${transformedDistance} = max(${minuendDistance}, -1.0 * ${subtrahendDistance});`;
@@ -99,7 +99,7 @@ export class Subtraction extends FirstMaterialCompoundField {
 export class SmoothUnion extends CompoundField {
     declare children: [AbstractField, AbstractField];
 
-    strength: Value<"float">;
+    strength: Value<ValueTypes.Float>;
 
     constructor(strength: FloatInput, childA: AbstractField, childB: AbstractField) {
         super(childA, childB);
@@ -110,10 +110,10 @@ export class SmoothUnion extends CompoundField {
         return filterUniforms([this.strength]);
     }
 
-    getDistanceCode(...distanceInputs: FloatInput[]): ShaderCode<"float"> {
+    getDistanceCode(...distanceInputs: FloatInput[]): ShaderCode<ValueTypes.Float> {
         const [distanceA, distanceB] = distanceInputs.map(parseFloatInput);
-        const h = new Variable<"float">();
-        const transformedDistance = new Variable<"float">();
+        const h = new Variable<ValueTypes.Float>();
+        const transformedDistance = new Variable<ValueTypes.Float>();
 
         const body = `
     float ${h} = clamp(0.5 + 0.5 * (${distanceB} - ${distanceA}) / ${this.strength}, 0.0, 1.0);
@@ -125,7 +125,7 @@ export class SmoothUnion extends CompoundField {
     getSelfMaterialCode(positionInput: Vec3Input, ...distanceInputs: [FloatInput, FloatInput]): MaterialShaderCode {
         const [distanceA, distanceB] = distanceInputs.map(parseFloatInput);
         const [materialA, materialB] = this.children.map((c) => c.getMaterialCode(positionInput));
-        const h = new Variable<"float">();
+        const h = new Variable<ValueTypes.Float>();
 
         const {
             body: mixBody,
@@ -142,7 +142,7 @@ export class SmoothUnion extends CompoundField {
 export class SmoothIntersection extends FirstMaterialCompoundField {
     declare children: [AbstractField, AbstractField];
 
-    strength: Value<"float">;
+    strength: Value<ValueTypes.Float>;
 
     constructor(strength: FloatInput, childA: AbstractField, childB: AbstractField) {
         super(childA, childB);
@@ -153,10 +153,10 @@ export class SmoothIntersection extends FirstMaterialCompoundField {
         return filterUniforms([this.strength]);
     }
 
-    getDistanceCode(...distanceInputs: FloatInput[]): ShaderCode<"float"> {
+    getDistanceCode(...distanceInputs: FloatInput[]): ShaderCode<ValueTypes.Float> {
         const [distanceA, distanceB] = distanceInputs.map(parseFloatInput);
-        const h = new Variable<"float">();
-        const transformedDistance = new Variable<"float">();
+        const h = new Variable<ValueTypes.Float>();
+        const transformedDistance = new Variable<ValueTypes.Float>();
 
         const body = `
     float ${h} = clamp(0.5 - 0.5 * (${distanceB} - ${distanceA}) / ${this.strength}, 0.0, 1.0);
@@ -169,7 +169,7 @@ export class SmoothIntersection extends FirstMaterialCompoundField {
 export class SmoothSubtraction extends FirstMaterialCompoundField {
     declare children: [AbstractField, AbstractField];
 
-    strength: Value<"float">;
+    strength: Value<ValueTypes.Float>;
 
     constructor(strength: FloatInput, minuend: AbstractField, subtrahend: AbstractField) {
         super(minuend, subtrahend);
@@ -180,10 +180,10 @@ export class SmoothSubtraction extends FirstMaterialCompoundField {
         return filterUniforms([this.strength]);
     }
 
-    getDistanceCode(...distanceInputs: FloatInput[]): ShaderCode<"float"> {
+    getDistanceCode(...distanceInputs: FloatInput[]): ShaderCode<ValueTypes.Float> {
         const [minuendDistance, subtrahendDistance] = distanceInputs.map(parseFloatInput);
-        const h = new Variable<"float">();
-        const transformedDistance = new Variable<"float">();
+        const h = new Variable<ValueTypes.Float>();
+        const transformedDistance = new Variable<ValueTypes.Float>();
 
         const body = `
     float ${h} = clamp(0.5 - 0.5 * (${minuendDistance} + ${subtrahendDistance}) / ${this.strength}, 0.0, 1.0);

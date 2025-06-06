@@ -22,7 +22,7 @@ export interface ShaderCode<T extends ValueTypes> {
 
 export abstract class AbstractField {
     getProgram(): [string, string, Uniform<ValueTypes, unknown>[]] {
-        const position = new Variable<"vec3">;
+        const position = new Variable<ValueTypes.Vec3>;
         const {
             body: sdfBody,
             result: distance
@@ -49,7 +49,7 @@ export abstract class AbstractField {
         return [vertShader, fragShader, uniforms];
     }
 
-    abstract getCode(positionInput: Vec3Input): ShaderCode<"float">;
+    abstract getCode(positionInput: Vec3Input): ShaderCode<ValueTypes.Float>;
     abstract getMaterialCode(positionInput: Vec3Input): MaterialShaderCode;
     abstract getUniforms(): Uniform<ValueTypes, unknown>[];
 }
@@ -75,7 +75,7 @@ export abstract class PrimitiveField extends AbstractField {
         return [...this.getSelfUniforms(), ...this.material.getUniforms()];
     }
 
-    abstract getPrimitiveCode(positionInput: Vec3Input): ShaderCode<"float">;
+    abstract getPrimitiveCode(positionInput: Vec3Input): ShaderCode<ValueTypes.Float>;
     abstract getSelfUniforms(): Uniform<ValueTypes, unknown>[];
 }
 
@@ -154,11 +154,11 @@ export abstract class CompoundField extends AbstractField {
         return uniforms;
     }
 
-    getPositionCode(positionInput: Vec3Input): ShaderCode<"vec3"> {
+    getPositionCode(positionInput: Vec3Input): ShaderCode<ValueTypes.Vec3> {
         return { body: "", result: parseVec3Input(positionInput) };
     }
 
-    getDistanceCode(...distanceInput: FloatInput[]): ShaderCode<"float"> {
+    getDistanceCode(...distanceInput: FloatInput[]): ShaderCode<ValueTypes.Float> {
         return { body: "", result: parseFloatInput(distanceInput[0]) };
     }
 
