@@ -8,8 +8,8 @@ interface Hooks<T> {
 }
 
 const FPS_POLL_RATE = 1000;
-const LOOK_INPUT = false;
-const MOVE_INPUT = false;
+const LOOK_INPUT = true;
+const MOVE_INPUT = true;
 
 export class Controller<T> {
     canvas: HTMLCanvasElement;
